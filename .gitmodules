@@ -1,0 +1,3 @@
+[submodule "library/src/main/native/kissfft"]
+	path = library/src/main/native/kissfft
+	url = git@github.com:itdaniher/kissfft.git
