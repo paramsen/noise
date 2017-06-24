@@ -1,4 +1,4 @@
-package com.paramsen.kissfft
+package com.paramsen.noise
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4

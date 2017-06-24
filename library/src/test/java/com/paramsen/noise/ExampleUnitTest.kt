@@ -1,4 +1,4 @@
-package com.paramsen.kissfft
+package com.paramsen.noise
 
 import org.junit.Test
 
