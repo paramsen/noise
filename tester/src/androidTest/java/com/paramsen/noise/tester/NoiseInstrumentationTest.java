@@ -28,7 +28,6 @@ public class NoiseInstrumentationTest {
         System.out.println("============");
     }
 
-    //75% faster (emulator)
     @Test
     public void testRealOptimized_Profile() throws Exception {
         NoiseOptimized noise = Noise.real().optimized().init(4096);
@@ -50,7 +49,6 @@ public class NoiseInstrumentationTest {
         System.out.println("============");
     }
 
-    //30% faster (emulator)
     @Test
     public void testImaginaryOptimized_Profile() throws Exception {
         NoiseOptimized noise = Noise.imaginary().optimized().init(4096);
