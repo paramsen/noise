@@ -32,7 +32,6 @@ class AudioView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawColor(Color.GRAY)
         path.reset()
 
         synchronized(audio) {
@@ -43,6 +42,7 @@ class AudioView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             }
         }
 
+        canvas.drawColor(Color.GRAY)
         canvas.drawPath(path, paint)
     }
 

@@ -19,8 +19,8 @@ typedef struct {
 
 JNIEXPORT void JNICALL
 Java_com_paramsen_noise_NoiseNativeBridge_realThreadSafe(JNIEnv *env, jobject jThis,
-                                                          jfloatArray jInput,
-                                                          jfloatArray jOutput) {
+                                                         jfloatArray jInput,
+                                                         jfloatArray jOutput) {
     jsize inSize = env->GetArrayLength(jInput);
     jsize outSize = env->GetArrayLength(jOutput);
 
@@ -38,11 +38,10 @@ Java_com_paramsen_noise_NoiseNativeBridge_realThreadSafe(JNIEnv *env, jobject jT
     kiss_fft_cpx *result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * outSize);
     kiss_fftr(config, input, result);
 
-    for (int i = 0; i < outSize; ++i)
-        if (i % 2 == 0)
-            output[i] = result[i].r;
-        else
-            output[i] = result[i].i;
+    for (int i = 0; i < outSize / 2; ++i) {
+        output[i * 2] = result[i].r;
+        output[i * 2 + 1] = result[i].i;
+    }
 
     env->SetFloatArrayRegion(jOutput, 0, outSize, output);
     env->ReleaseFloatArrayElements(jInput, input, 0);
@@ -53,7 +52,7 @@ Java_com_paramsen_noise_NoiseNativeBridge_realThreadSafe(JNIEnv *env, jobject jT
 
 JNIEXPORT jlong JNICALL
 Java_com_paramsen_noise_NoiseNativeBridge_realOptimizedCfg(JNIEnv *env, jobject jThis,
-                                                            jint inSize) {
+                                                           jint inSize) {
     NoiseOptimizedRealCfg *cfg = (NoiseOptimizedRealCfg *) malloc(sizeof(NoiseOptimizedRealCfg));
     cfg->config = kiss_fftr_alloc(inSize, 0, 0, 0);
     cfg->result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize + 2);
@@ -63,7 +62,7 @@ Java_com_paramsen_noise_NoiseNativeBridge_realOptimizedCfg(JNIEnv *env, jobject 
 
 JNIEXPORT void JNICALL
 Java_com_paramsen_noise_NoiseNativeBridge_realOptimizedCfgDispose(JNIEnv *env, jobject jThis,
-                                                                   jlong cfgPointer) {
+                                                                  jlong cfgPointer) {
     NoiseOptimizedRealCfg *cfg = (NoiseOptimizedRealCfg *) cfgPointer;
 
     free(cfg->config);
@@ -73,8 +72,8 @@ Java_com_paramsen_noise_NoiseNativeBridge_realOptimizedCfgDispose(JNIEnv *env, j
 
 JNIEXPORT void JNICALL
 Java_com_paramsen_noise_NoiseNativeBridge_realOptimized(JNIEnv *env, jobject jThis,
-                                                         jfloatArray jInput,
-                                                         jfloatArray jOutput, jlong cfgPointer) {
+                                                        jfloatArray jInput,
+                                                        jfloatArray jOutput, jlong cfgPointer) {
     jsize inSize = env->GetArrayLength(jInput);
     jsize outSize = env->GetArrayLength(jOutput);
 
@@ -91,11 +90,10 @@ Java_com_paramsen_noise_NoiseNativeBridge_realOptimized(JNIEnv *env, jobject jTh
 
     kiss_fftr(cfg->config, input, cfg->result);
 
-    for (int i = 0; i < outSize; ++i)
-        if (i % 2 == 0)
-            output[i] = cfg->result[i].r;
-        else
-            output[i] = cfg->result[i].i;
+    for (int i = 0; i < outSize / 2; ++i) {
+        output[i * 2] = cfg->result[i].r;
+        output[i * 2 + 1] = cfg->result[i].i;
+    }
 
     env->ReleaseFloatArrayElements(jInput, input, 0);
     env->ReleaseFloatArrayElements(jOutput, output, 0);
@@ -103,8 +101,11 @@ Java_com_paramsen_noise_NoiseNativeBridge_realOptimized(JNIEnv *env, jobject jTh
 
 JNIEXPORT void JNICALL
 Java_com_paramsen_noise_NoiseNativeBridge_imaginaryThreadSafe(JNIEnv *env, jobject jThis,
-                                                               jfloatArray jInput,
-                                                               jfloatArray jOutput) {
+                                                              jfloatArray jInput,
+                                                              jfloatArray jOutput) {
+    if(jInput != NULL)
+        throw "Fix kissfft to output format";
+
     jsize inSize = env->GetArrayLength(jInput);
     jsize outSize = env->GetArrayLength(jOutput);
 
@@ -145,7 +146,7 @@ Java_com_paramsen_noise_NoiseNativeBridge_imaginaryThreadSafe(JNIEnv *env, jobje
 
 JNIEXPORT jlong JNICALL
 Java_com_paramsen_noise_NoiseNativeBridge_imaginaryOptimizedCfg(JNIEnv *env, jobject jThis,
-                                                                 jint inSize) {
+                                                                jint inSize) {
     NoiseOptimizedImaginaryCfg *cfg = (NoiseOptimizedImaginaryCfg *) malloc(
             sizeof(NoiseOptimizedImaginaryCfg));
     cfg->config = kiss_fft_alloc(inSize, 0, 0, 0);
@@ -157,7 +158,7 @@ Java_com_paramsen_noise_NoiseNativeBridge_imaginaryOptimizedCfg(JNIEnv *env, job
 
 JNIEXPORT void JNICALL
 Java_com_paramsen_noise_NoiseNativeBridge_imaginaryOptimizedCfgDispose(JNIEnv *env, jobject jThis,
-                                                                        jlong cfgPointer) {
+                                                                       jlong cfgPointer) {
     NoiseOptimizedImaginaryCfg *cfg = (NoiseOptimizedImaginaryCfg *) cfgPointer;
 
     free(cfg->config);
@@ -168,9 +169,12 @@ Java_com_paramsen_noise_NoiseNativeBridge_imaginaryOptimizedCfgDispose(JNIEnv *e
 
 JNIEXPORT void JNICALL
 Java_com_paramsen_noise_NoiseNativeBridge_imaginaryOptimized(JNIEnv *env, jobject jThis,
-                                                              jfloatArray jInput,
-                                                              jfloatArray jOutput,
-                                                              jlong cfgPointer) {
+                                                             jfloatArray jInput,
+                                                             jfloatArray jOutput,
+                                                             jlong cfgPointer) {
+    if(jInput != NULL)
+        throw "Fix kissfft to output format";
+
     jsize inSize = env->GetArrayLength(jInput);
     jsize outSize = env->GetArrayLength(jOutput);
 

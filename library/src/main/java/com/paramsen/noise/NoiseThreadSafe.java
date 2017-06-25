@@ -10,7 +10,8 @@ public class NoiseThreadSafe {
         this.fft = fft;
     }
 
-    public void fft(float[] in, float[] out) {
+    public float[] fft(float[] in, float[] out) {
         fft.fft(in, out);
+        return out;
     }
 }

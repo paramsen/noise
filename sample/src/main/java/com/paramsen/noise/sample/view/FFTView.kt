@@ -4,58 +4,36 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.util.AttributeSet
 import android.view.View
-import java.util.*
+import java.lang.System.arraycopy
 
 /**
  * @author Pär Amsen 06/2017
  */
 class FFTView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
-    val sec = 10
-    val hz = 44100
-    val skip = 500
-    val history = hz * sec / skip
-    val audio: Deque<Float>
-
-    val paint: Paint
-    val path: Path
+    val fft: FloatArray = FloatArray(4098)
+    val paint: Paint = Paint()
 
     init {
-        audio = ArrayDeque()
-        paint = Paint()
-        paint.color = Color.GREEN
-        paint.strokeWidth = 1f
+        paint.color = Color.parseColor("#1F77ED")
+        paint.strokeWidth = 5f
         paint.style = Paint.Style.STROKE
-        path = Path()
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawColor(Color.GRAY)
-        path.reset()
+        canvas.drawColor(Color.DKGRAY)
 
-        synchronized(audio) {
-            for ((i, sample) in audio.withIndex()) {
-                if(i == 0)
-                    path.moveTo(width.toFloat(), sample)
-                path.lineTo(width - width * i / history.toFloat(), sample * 0.1f + height / 2)
+        synchronized(fft) {
+            fft.forEachIndexed { i, f ->
+                canvas.drawPoint(width * (i / fft.size.toFloat()), -(f * 0.01f) + height, paint)
             }
         }
-
-        canvas.drawPath(path, paint)
     }
 
-    fun onWindow(window: FloatArray) {
-        synchronized(audio) {
-            window.forEachIndexed { i, sample ->
-                if (i % skip == 0)
-                    audio.addFirst(sample)
-            }
-
-            while (audio.size > history)
-                audio.removeLast()
-
+    fun onFFT(fft: FloatArray) {
+        synchronized(this.fft) {
+            arraycopy(fft, 0, this.fft, 0, fft.size)
             postInvalidate()
         }
     }
