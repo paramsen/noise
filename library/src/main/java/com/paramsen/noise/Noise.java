@@ -4,12 +4,33 @@ package com.paramsen.noise;
  * @author Pär Amsen 06/2017
  */
 public class Noise {
-    public static void real(float[] in, float[] out) {
-        NoiseNativeBridge.real(in, out);
+    public static Builder real() {
+        return new Builder(true);
     }
 
-    public static void imaginary(float[] in, float[] out) {
-        NoiseNativeBridge.imaginary(in, out);
+    public static Builder imaginary() {
+        return new Builder(false);
     }
 
+    public static class Builder {
+        private boolean real;
+
+        private Builder(boolean real) {
+            this.real = real;
+        }
+
+        public NoiseThreadSafe threadSafe() {
+            if (real) return new NoiseThreadSafe(NoiseNativeBridge::nRealThreadSafe);
+            else return new NoiseThreadSafe(NoiseNativeBridge::nImaginaryThreadSafe);
+        }
+
+        public NoiseOptimized optimized() {
+//            if (real)
+                return new NoiseOptimized(NoiseNativeBridge::nRealOptimized);
+//            else
+//                return new NoiseOptimized((in, out, cfgPointer) -> {
+//                    NoiseNativeBridge.nRealThreadSafe(in, out);
+//                });
+        }
+    }
 }

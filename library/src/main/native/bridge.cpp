@@ -9,15 +9,15 @@ extern "C" {
 /**
  * Pre alloc this struct and pass a pointer in order to reuse
  */
-struct optimized {
+typedef struct {
     kiss_fft_cpx *result;
     kiss_fftr_cfg config;
-    jfloat *flat;
-};
+} NoiseOptimizedRealCfg;
 
 JNIEXPORT void JNICALL
-Java_com_paramsen_noise_NoiseNativeBridge_nReal(JNIEnv *env, jobject jThis, jfloatArray jInput,
-                                                jfloatArray jOutput) {
+Java_com_paramsen_noise_NoiseNativeBridge_nRealThreadSafe(JNIEnv *env, jobject jThis,
+                                                          jfloatArray jInput,
+                                                          jfloatArray jOutput) {
     jsize inSize = env->GetArrayLength(jInput);
     jsize outSize = env->GetArrayLength(jOutput);
 
@@ -29,32 +29,47 @@ Java_com_paramsen_noise_NoiseNativeBridge_nReal(JNIEnv *env, jobject jThis, jflo
                             "kissfft require input length to be even");
 
     float *input = env->GetFloatArrayElements(jInput, 0);
+    jfloat *output = env->GetFloatArrayElements(jOutput, 0);
 
     kiss_fftr_cfg config = kiss_fftr_alloc(inSize, 0, 0, 0);
     kiss_fft_cpx *result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * outSize);
     kiss_fftr(config, input, result);
-    jfloat *flat = (jfloat *) malloc(sizeof(jfloat) * outSize);
 
     for (int i = 0; i < outSize; ++i)
         if (i % 2 == 0)
-            flat[i] = result[i].r;
+            output[i] = result[i].r;
         else
-            flat[i] = result[i].i;
+            output[i] = result[i].i;
 
-    env->SetFloatArrayRegion(jOutput, 0, outSize, flat);
+    env->SetFloatArrayRegion(jOutput, 0, outSize, output);
     env->ReleaseFloatArrayElements(jInput, input, 0);
+    env->ReleaseFloatArrayElements(jOutput, output, 0);
     free(config);
     free(result);
-    free(flat);
 }
 
-kiss_fft_cpx *result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * 4098);
-kiss_fftr_cfg config = kiss_fftr_alloc(4096, 0, 0, 0);
-jfloat *flat = (jfloat *) malloc(sizeof(jfloat) * 4098);
+JNIEXPORT jlong JNICALL
+Java_com_paramsen_noise_NoiseNativeBridge_nRealOptimizedCfg(JNIEnv *env, jobject jThis, jint inSize) {
+    NoiseOptimizedRealCfg *cfg = (NoiseOptimizedRealCfg *) malloc(sizeof(NoiseOptimizedRealCfg));
+    cfg->config = kiss_fftr_alloc(inSize, 0, 0, 0);
+    cfg->result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize + 2);
+
+    return (jlong) cfg;
+}
 
 JNIEXPORT void JNICALL
-Java_com_paramsen_noise_NoiseNativeBridge_nRealOpt(JNIEnv *env, jobject jThis, jfloatArray jInput,
-                                                jfloatArray jOutput) {
+Java_com_paramsen_noise_NoiseNativeBridge_nRealOptimizedCfgDispose(JNIEnv *env, jobject jThis, jlong cfgPointer) {
+    NoiseOptimizedRealCfg *cfg = (NoiseOptimizedRealCfg *) cfgPointer;
+
+    free(cfg->config);
+    free(cfg->result);
+    free(cfg);
+}
+
+JNIEXPORT void JNICALL
+Java_com_paramsen_noise_NoiseNativeBridge_nRealOptimized(JNIEnv *env, jobject jThis,
+                                                         jfloatArray jInput,
+                                                         jfloatArray jOutput, jlong cfgPointer) {
     jsize inSize = env->GetArrayLength(jInput);
     jsize outSize = env->GetArrayLength(jOutput);
 
@@ -66,22 +81,25 @@ Java_com_paramsen_noise_NoiseNativeBridge_nRealOpt(JNIEnv *env, jobject jThis, j
                             "kissfft require input length to be even");
 
     float *input = env->GetFloatArrayElements(jInput, 0);
+    jfloat *output = env->GetFloatArrayElements(jOutput, 0);
+    NoiseOptimizedRealCfg *cfg = (NoiseOptimizedRealCfg *) cfgPointer;
 
-    kiss_fftr(config, input, result);
+    kiss_fftr(cfg->config, input, cfg->result);
 
     for (int i = 0; i < outSize; ++i)
         if (i % 2 == 0)
-            flat[i] = result[i].r;
+            output[i] = cfg->result[i].r;
         else
-            flat[i] = result[i].i;
+            output[i] = cfg->result[i].i;
 
-    env->SetFloatArrayRegion(jOutput, 0, outSize, flat);
     env->ReleaseFloatArrayElements(jInput, input, 0);
+    env->ReleaseFloatArrayElements(jOutput, output, 0);
 }
 
 JNIEXPORT void JNICALL
-Java_com_paramsen_noise_NoiseNativeBridge_nImaginary(JNIEnv *env, jobject jThis, jfloatArray jInput,
-                                                     jfloatArray jOutput) {
+Java_com_paramsen_noise_NoiseNativeBridge_nImaginaryThreadSafe(JNIEnv *env, jobject jThis,
+                                                               jfloatArray jInput,
+                                                               jfloatArray jOutput) {
     jsize inSize = env->GetArrayLength(jInput);
     jsize outSize = env->GetArrayLength(jOutput);
 
@@ -93,6 +111,7 @@ Java_com_paramsen_noise_NoiseNativeBridge_nImaginary(JNIEnv *env, jobject jThis,
                             "kissfft require input length to be even");
 
     float *input = env->GetFloatArrayElements(jInput, 0);
+    float *output = env->GetFloatArrayElements(jOutput, 0);
     kiss_fft_cpx *fftInput = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize);
 
     for (int i = 0; i < inSize / 2; ++i)
@@ -104,19 +123,18 @@ Java_com_paramsen_noise_NoiseNativeBridge_nImaginary(JNIEnv *env, jobject jThis,
     kiss_fft_cfg config = kiss_fft_alloc(inSize, 0, 0, 0);
     kiss_fft_cpx *result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * outSize);
     kiss_fft(config, fftInput, result);
-    jfloat *flat = (jfloat *) malloc(sizeof(jfloat) * outSize);
 
     for (int i = 0; i < outSize; ++i)
         if (i % 2 == 0)
-            flat[i] = result[i].r;
+            output[i] = result[i].r;
         else
-            flat[i] = result[i].i;
+            output[i] = result[i].i;
 
-    env->SetFloatArrayRegion(jOutput, 0, outSize, flat);
+    env->SetFloatArrayRegion(jOutput, 0, outSize, output);
     env->ReleaseFloatArrayElements(jInput, input, 0);
+    env->ReleaseFloatArrayElements(jOutput, output, 0);
     free(config);
     free(fftInput);
     free(result);
-    free(flat);
 }
 }

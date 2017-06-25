@@ -9,14 +9,17 @@ public class NoiseNativeBridge {
     }
 
     public static void real(float[] in, float[] out) {
-        nReal(in, out);
+        nRealThreadSafe(in, out);
     }
 
     public static void imaginary(float[] in, float[] out) {
-        nImaginary(in, out);
+        nImaginaryThreadSafe(in, out);
     }
 
-    static native void nReal(float[] in, float[] out);
-    static native void nImaginary(float[] in, float[] out);
-    public static native void nRealOpt(float[] in, float[] out);
+    static native void nRealThreadSafe(float[] in, float[] out);
+    static native void nImaginaryThreadSafe(float[] in, float[] out);
+
+    public static native long nRealOptimizedCfg(int inSize);
+    public static native void nRealOptimized(float[] in, float[] out, long cfgPointer);
+    public static native long nRealOptimizedCfgDispose(long cfgPointer);
 }
