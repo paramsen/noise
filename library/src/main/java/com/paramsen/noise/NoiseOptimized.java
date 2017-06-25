@@ -12,7 +12,7 @@ public class NoiseOptimized {
     }
 
     public NoiseOptimized init(int inSize) {
-        cfgPointer = NoiseNativeBridge.nRealOptimizedCfg(inSize);
+        cfgPointer = NoiseNativeBridge.realOptimizedCfg(inSize);
         return this;
     }
 
@@ -21,6 +21,6 @@ public class NoiseOptimized {
     }
 
     public void dispose() {
-        NoiseNativeBridge.nRealOptimizedCfgDispose(cfgPointer);
+        NoiseNativeBridge.realOptimizedCfgDispose(cfgPointer);
     }
 }

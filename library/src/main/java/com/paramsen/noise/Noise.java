@@ -20,17 +20,17 @@ public class Noise {
         }
 
         public NoiseThreadSafe threadSafe() {
-            if (real) return new NoiseThreadSafe(NoiseNativeBridge::nRealThreadSafe);
-            else return new NoiseThreadSafe(NoiseNativeBridge::nImaginaryThreadSafe);
+            if (real) return new NoiseThreadSafe(NoiseNativeBridge::realThreadSafe);
+            else return new NoiseThreadSafe(NoiseNativeBridge::imaginaryThreadSafe);
         }
 
         public NoiseOptimized optimized() {
-//            if (real)
-                return new NoiseOptimized(NoiseNativeBridge::nRealOptimized);
-//            else
-//                return new NoiseOptimized((in, out, cfgPointer) -> {
-//                    NoiseNativeBridge.nRealThreadSafe(in, out);
-//                });
+            if (real)
+                return new NoiseOptimized(NoiseNativeBridge::realOptimized);
+            else
+                return new NoiseOptimized((in, out, cfgPointer) -> {
+                    NoiseNativeBridge.realThreadSafe(in, out);
+                });
         }
     }
 }

@@ -29,6 +29,7 @@ public class NoiseInstrumentationTest {
         System.out.println("============");
     }
 
+    //75% faster (emulator)
     @Test
     public void testRealOptimized_Profile() throws Exception {
         int runs = 0;
@@ -42,6 +43,38 @@ public class NoiseInstrumentationTest {
 
         System.out.println("============");
         System.out.printf("=== ROS: %d/1000ms\n", runs);
+        System.out.println("============");
+    }
+
+    @Test
+    public void testImaginaryThreadSafe_Profile() throws Exception {
+        int runs = 0;
+        NoiseThreadSafe noise = Noise.imaginary().threadSafe();
+        long start = System.currentTimeMillis();
+
+        while(System.currentTimeMillis() - start <= 1000) {
+            noise.fft(new float[4096], new float[4096]);
+            runs++;
+        }
+        System.out.println("============");
+        System.out.printf("=== ITS: %d/1000ms\n", runs);
+        System.out.println("============");
+    }
+
+    //30% faster (emulator)
+    @Test
+    public void testImaginaryOptimized_Profile() throws Exception {
+        int runs = 0;
+        NoiseOptimized noise = Noise.imaginary().optimized().init(4096);
+        long start = System.currentTimeMillis();
+        while(System.currentTimeMillis() - start <= 1000) {
+            noise.fft(new float[4096], new float[4096]);
+            runs++;
+        }
+        noise.dispose();
+
+        System.out.println("============");
+        System.out.printf("=== IOS: %d/1000ms\n", runs);
         System.out.println("============");
     }
 }

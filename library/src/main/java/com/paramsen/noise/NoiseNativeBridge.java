@@ -8,18 +8,13 @@ public class NoiseNativeBridge {
         System.loadLibrary("noise");
     }
 
-    public static void real(float[] in, float[] out) {
-        nRealThreadSafe(in, out);
-    }
+    public static native void realThreadSafe(float[] in, float[] out);
+    public static native long realOptimizedCfg(int inSize);
+    public static native void realOptimized(float[] in, float[] out, long cfgPointer);
+    public static native long realOptimizedCfgDispose(long cfgPointer);
 
-    public static void imaginary(float[] in, float[] out) {
-        nImaginaryThreadSafe(in, out);
-    }
-
-    static native void nRealThreadSafe(float[] in, float[] out);
-    static native void nImaginaryThreadSafe(float[] in, float[] out);
-
-    public static native long nRealOptimizedCfg(int inSize);
-    public static native void nRealOptimized(float[] in, float[] out, long cfgPointer);
-    public static native long nRealOptimizedCfgDispose(long cfgPointer);
+    public static native void imaginaryThreadSafe(float[] in, float[] out);
+    public static native long imaginaryOptimizedCfg(int inSize);
+    public static native void imaginaryOptimized(float[] in, float[] out, long cfgPointer);
+    public static native long imaginaryOptimizedCfgDispose(long cfgPointer);
 }
