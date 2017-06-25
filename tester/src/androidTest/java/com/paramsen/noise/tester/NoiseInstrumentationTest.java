@@ -12,18 +12,17 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 @RunWith(AndroidJUnit4.class)
 public class NoiseInstrumentationTest {
     @Test
     public void testRealThreadSafe_Profile() throws Exception {
-        int runs = 0;
         NoiseThreadSafe noise = Noise.real().threadSafe();
-        long start = System.currentTimeMillis();
+        long runs = loopFor(1, TimeUnit.SECONDS, () -> noise.fft(new float[4096], new float[4096 + 2]));
 
-        while(System.currentTimeMillis() - start <= 1000) {
-            noise.fft(new float[4096], new float[4096 + 2]);
-            runs++;
-        }
         System.out.println("============");
         System.out.printf("=== RTS: %d/1000ms\n", runs);
         System.out.println("============");
@@ -32,13 +31,8 @@ public class NoiseInstrumentationTest {
     //75% faster (emulator)
     @Test
     public void testRealOptimized_Profile() throws Exception {
-        int runs = 0;
         NoiseOptimized noise = Noise.real().optimized().init(4096);
-        long start = System.currentTimeMillis();
-        while(System.currentTimeMillis() - start <= 1000) {
-            noise.fft(new float[4096], new float[4096 + 2]);
-            runs++;
-        }
+        long runs = loopFor(1, TimeUnit.SECONDS, () -> noise.fft(new float[4096], new float[4096 + 2]));
         noise.dispose();
 
         System.out.println("============");
@@ -48,14 +42,9 @@ public class NoiseInstrumentationTest {
 
     @Test
     public void testImaginaryThreadSafe_Profile() throws Exception {
-        int runs = 0;
         NoiseThreadSafe noise = Noise.imaginary().threadSafe();
-        long start = System.currentTimeMillis();
+        long runs = loopFor(1, TimeUnit.SECONDS, () -> noise.fft(new float[4096], new float[4096]));
 
-        while(System.currentTimeMillis() - start <= 1000) {
-            noise.fft(new float[4096], new float[4096]);
-            runs++;
-        }
         System.out.println("============");
         System.out.printf("=== ITS: %d/1000ms\n", runs);
         System.out.println("============");
@@ -64,17 +53,25 @@ public class NoiseInstrumentationTest {
     //30% faster (emulator)
     @Test
     public void testImaginaryOptimized_Profile() throws Exception {
-        int runs = 0;
         NoiseOptimized noise = Noise.imaginary().optimized().init(4096);
-        long start = System.currentTimeMillis();
-        while(System.currentTimeMillis() - start <= 1000) {
-            noise.fft(new float[4096], new float[4096]);
-            runs++;
-        }
+        long runs = loopFor(1, TimeUnit.SECONDS, () -> noise.fft(new float[4096], new float[4096]));
         noise.dispose();
 
         System.out.println("============");
         System.out.printf("=== IOS: %d/1000ms\n", runs);
         System.out.println("============");
+    }
+
+    /**
+     * Profile how many times Runnable *each* can execute during long *time* of TimeUnit *unit*
+     */
+    private long loopFor(long time, TimeUnit unit, Runnable each) {
+        long start = System.currentTimeMillis();
+        int runs = 0;
+        while(System.currentTimeMillis() - start <= unit.toMillis(time)) {
+            each.run();
+            runs++;
+        }
+        return runs;
     }
 }
