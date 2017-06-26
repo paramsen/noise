@@ -15,20 +15,22 @@ import java.util.*
 class AudioView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     val sec = 10
     val hz = 44100
-    val skip = 500
+    val skip = 128
     val history = hz * sec / skip
-    val audio: Deque<Float>
+    val audio: ArrayDeque<Float> = ArrayDeque()
 
-    val paint: Paint
-    val path: Path
+    val paintAudio: Paint = Paint()
+    val paintText: Paint = Paint()
+    val path: Path = Path()
 
     init {
-        audio = ArrayDeque()
-        paint = Paint()
-        paint.color = Color.GREEN
-        paint.strokeWidth = 1f
-        paint.style = Paint.Style.STROKE
-        path = Path()
+        paintAudio.color = Color.GREEN
+        paintAudio.strokeWidth = 0f
+        paintAudio.style = Paint.Style.STROKE
+
+        paintText.color = Color.parseColor("#AAFFFFFF")
+        paintText.style = Paint.Style.FILL
+        paintText.textSize = 12f.px
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -36,21 +38,30 @@ class AudioView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
         synchronized(audio) {
             for ((i, sample) in audio.withIndex()) {
-                if(i == 0)
+                if (i == 0)
                     path.moveTo(width.toFloat(), sample)
-                path.lineTo(width - width * i / history.toFloat(), sample * 0.1f + height / 2)
+                path.lineTo(width - width * i / history.toFloat(), sample * 0.175f + height / 2)
             }
+            if (audio.size > 0 && audio.size < history)
+                path.lineTo(0f, height / 2.toFloat())
         }
 
         canvas.drawColor(Color.GRAY)
-        canvas.drawPath(path, paint)
+        canvas.drawPath(path, paintAudio)
+        canvas.drawText("AUDIO", 16f.px, 24f.px, paintText)
     }
 
     fun onWindow(window: FloatArray) {
         synchronized(audio) {
-            window.forEachIndexed { i, sample ->
-                if (i % skip == 0)
-                    audio.addFirst(sample)
+            var accum = 0f
+
+            for ((i, sample) in window.withIndex()) {
+                if (i > 0 && i % skip != 0)
+                    accum += sample
+                else {
+                    audio.addFirst(accum / skip)
+                    accum = 0f
+                }
             }
 
             while (audio.size > history)
