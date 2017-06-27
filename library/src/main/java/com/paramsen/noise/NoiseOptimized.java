@@ -9,19 +9,21 @@ public class NoiseOptimized {
     private float[] out;
 
     private Func3 fft;
-    private final Func1 outFactory;
+    private Func1<Long, Integer> cfgFactory;
+    private Func1<float[], Integer> outFactory;
 
-    public NoiseOptimized(Func3 fft, Func1 outFactory) {
+    public NoiseOptimized(Func3 fft, Func1<Long, Integer> cfgFactory, Func1<float[], Integer> outFactory) {
         this.fft = fft;
+        this.cfgFactory = cfgFactory;
         this.outFactory = outFactory;
     }
 
     public NoiseOptimized init(int inSize, boolean internalStorage) {
         this.inSize = inSize;
-        this.cfgPointer = NoiseNativeBridge.realOptimizedCfg(inSize);
+        this.cfgPointer = cfgFactory.call(inSize);
 
         if(internalStorage)
-            out = outFactory.create(inSize);
+            out = outFactory.call(inSize);
 
         return this;
     }

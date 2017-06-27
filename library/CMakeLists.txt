@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 add_library( noise
              SHARED
-             src/main/native/bridge.cpp
+             src/main/native/noise.cpp
              src/main/native/kissfft/kiss_fft.c
              src/main/native/kissfft/tools/kiss_fftr.c )
 

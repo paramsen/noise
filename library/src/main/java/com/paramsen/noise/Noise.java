@@ -26,11 +26,9 @@ public class Noise {
 
         public NoiseOptimized optimized() {
             if (real)
-                return new NoiseOptimized(NoiseNativeBridge::realOptimized, inSize -> new float[inSize + 2]);
+                return new NoiseOptimized(NoiseNativeBridge::realOptimized, NoiseNativeBridge::realOptimizedCfg, inSize -> new float[inSize + 2]);
             else
-                return new NoiseOptimized((in, out, cfgPointer) -> {
-                    NoiseNativeBridge.realThreadSafe(in, out);
-                }, float[]::new);
+                return new NoiseOptimized(NoiseNativeBridge::imaginaryOptimized, NoiseNativeBridge::imaginaryOptimizedCfg, float[]::new);
         }
     }
 }

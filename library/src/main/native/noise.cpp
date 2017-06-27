@@ -103,38 +103,30 @@ JNIEXPORT void JNICALL
 Java_com_paramsen_noise_NoiseNativeBridge_imaginaryThreadSafe(JNIEnv *env, jobject jThis,
                                                               jfloatArray jInput,
                                                               jfloatArray jOutput) {
-    if(jInput != NULL)
-        throw "Fix kissfft to output format";
-
     jsize inSize = env->GetArrayLength(jInput);
     jsize outSize = env->GetArrayLength(jOutput);
 
-    if (inSize != outSize)
+    if (outSize != inSize)
         __android_log_print(ANDROID_LOG_ERROR, "NATIVE_NOISE",
                             "output len must equal input len. Read javadoc.");
-    if (inSize & 1)
-        __android_log_print(ANDROID_LOG_ERROR, "NATIVE_NOISE",
-                            "kissfft require input length to be even");
 
     float *input = env->GetFloatArrayElements(jInput, 0);
     float *output = env->GetFloatArrayElements(jOutput, 0);
     kiss_fft_cpx *fftInput = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize);
 
-    for (int i = 0; i < inSize / 2; ++i)
-        if (i % 2 == 0)
-            fftInput[i].r = input[i];
-        else
-            fftInput[i].i = input[i];
+    for (int i = 0; i < inSize; i += 2) {
+        fftInput[i].r = input[i];
+        fftInput[i].i = input[i + 1];
+    }
 
     kiss_fft_cfg config = kiss_fft_alloc(inSize, 0, 0, 0);
     kiss_fft_cpx *result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * outSize);
     kiss_fft(config, fftInput, result);
 
-    for (int i = 0; i < outSize; ++i)
-        if (i % 2 == 0)
-            output[i] = result[i].r;
-        else
-            output[i] = result[i].i;
+    for (int i = 0; i < outSize; i += 2) {
+        output[i] = result[i].r;
+        output[i + 1] = result[i].i;
+    }
 
     env->SetFloatArrayRegion(jOutput, 0, outSize, output);
     env->ReleaseFloatArrayElements(jInput, input, 0);
@@ -150,8 +142,8 @@ Java_com_paramsen_noise_NoiseNativeBridge_imaginaryOptimizedCfg(JNIEnv *env, job
     NoiseOptimizedImaginaryCfg *cfg = (NoiseOptimizedImaginaryCfg *) malloc(
             sizeof(NoiseOptimizedImaginaryCfg));
     cfg->config = kiss_fft_alloc(inSize, 0, 0, 0);
-    cfg->fftInput = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize + 2);
-    cfg->result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize + 2);
+    cfg->fftInput = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize);
+    cfg->result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize);
 
     return (jlong) cfg;
 }
@@ -172,36 +164,28 @@ Java_com_paramsen_noise_NoiseNativeBridge_imaginaryOptimized(JNIEnv *env, jobjec
                                                              jfloatArray jInput,
                                                              jfloatArray jOutput,
                                                              jlong cfgPointer) {
-    if(jInput != NULL)
-        throw "Fix kissfft to output format";
-
     jsize inSize = env->GetArrayLength(jInput);
     jsize outSize = env->GetArrayLength(jOutput);
 
-    if (inSize != outSize)
+    if (outSize != inSize)
         __android_log_print(ANDROID_LOG_ERROR, "NATIVE_NOISE",
                             "output len must equal input len. Read javadoc.");
-    if (inSize & 1)
-        __android_log_print(ANDROID_LOG_ERROR, "NATIVE_NOISE",
-                            "kissfft require input length to be even");
 
     float *input = env->GetFloatArrayElements(jInput, 0);
     float *output = env->GetFloatArrayElements(jOutput, 0);
     NoiseOptimizedImaginaryCfg *cfg = (NoiseOptimizedImaginaryCfg *) cfgPointer;
 
-    for (int i = 0; i < inSize / 2; ++i)
-        if (i % 2 == 0)
-            cfg->fftInput[i].r = input[i];
-        else
-            cfg->fftInput[i].i = input[i];
+    for (int i = 0; i < inSize; i += 2) {
+        cfg->fftInput[i].r = input[i];
+        cfg->fftInput[i].i = input[i + 1];
+    }
 
     kiss_fft(cfg->config, cfg->fftInput, cfg->result);
 
-    for (int i = 0; i < outSize; ++i)
-        if (i % 2 == 0)
-            output[i] = cfg->result[i].r;
-        else
-            output[i] = cfg->result[i].i;
+    for (int i = 0; i < outSize; i += 2) {
+        output[i] = cfg->result[i].r;
+        output[i + 1] = cfg->result[i].i;
+    }
 
     env->SetFloatArrayRegion(jOutput, 0, outSize, output);
     env->ReleaseFloatArrayElements(jInput, input, 0);
