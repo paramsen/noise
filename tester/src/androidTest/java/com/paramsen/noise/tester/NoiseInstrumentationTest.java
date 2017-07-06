@@ -1,15 +1,22 @@
 package com.paramsen.noise.tester;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.paramsen.noise.Noise;
 import com.paramsen.noise.NoiseOptimized;
 import com.paramsen.noise.NoiseThreadSafe;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+
+import static junit.framework.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class NoiseInstrumentationTest {
@@ -35,9 +42,24 @@ public class NoiseInstrumentationTest {
     }
 
     @Test
-    public void testRealOptimized_Profile_internalStorage() throws Exception {
+    public void testRealOptimized_internalStorage() throws Exception {
         NoiseOptimized noise = Noise.real().optimized().init(4096, true);
         loopFor(100, TimeUnit.MILLISECONDS, () -> noise.fft(new float[4096]));
+        noise.dispose();
+    }
+
+    @Test
+    public void testRealOptimized_Prove() throws Exception {
+        NoiseOptimized noise = Noise.real().optimized().init(4096, true);,
+        float[] input = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096.dat")).get();
+        float[] result = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096_result.dat")).get();
+        loopFor(100, TimeUnit.MILLISECONDS, () -> {
+            float[] fft = noise.fft(input);
+            
+            for (int i = 0; i < input.length; i++) {
+                assertEquals(result[i], fft[i]);
+            }
+        });
         noise.dispose();
     }
 
@@ -71,7 +93,7 @@ public class NoiseInstrumentationTest {
 
     /**
      * Run Runnable *each* repeatedly during long *time* of TimeUnit *unit* and return how many
-     * times Runnable *each* was run
+     * times Runnable *each* was run. For profiling.
      */
     private long loopFor(long time, TimeUnit unit, Runnable each) {
         long start = System.currentTimeMillis();

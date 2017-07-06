@@ -1,6 +1,8 @@
 package com.paramsen.noise;
 
 /**
+ * JNI interface
+ *
  * @author Pär Amsen 06/2017
  */
 public class NoiseNativeBridge {
