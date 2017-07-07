@@ -49,17 +49,19 @@ public class NoiseInstrumentationTest {
     }
 
     @Test
-    public void testRealOptimized_Prove() throws Exception {
-        NoiseOptimized noise = Noise.real().optimized().init(4096, true);,
+    public void testRealOptimized_Assert_kissfft() throws Exception {
+        NoiseOptimized noise = Noise.real().optimized().init(4096, true);
         float[] input = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096.dat")).get();
-        float[] result = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096_result.dat")).get();
+        float[] kissfftPrerecordedFFT = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096_result.dat")).get();
+
         loopFor(100, TimeUnit.MILLISECONDS, () -> {
             float[] fft = noise.fft(input);
-            
+
             for (int i = 0; i < input.length; i++) {
-                assertEquals(result[i], fft[i]);
+                assertEquals(kissfftPrerecordedFFT[i], fft[i]);
             }
         });
+
         noise.dispose();
     }
 
