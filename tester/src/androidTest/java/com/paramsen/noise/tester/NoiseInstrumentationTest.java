@@ -30,6 +30,28 @@ public class NoiseInstrumentationTest {
         System.out.println("============");
     }
 
+    /**
+     * Assert that the output on a predefined signal of 4096 from kissfft is exactly the same for
+     * this library as it is for kissfft. The "prerecorded" FFT is created through the
+     * cpp_test_data_suite which simply compiles and runs kissfft on the input dataset in assets.
+     *
+     * Hence, if this test is green kissfft works as intended.
+     */
+    @Test
+    public void testRealThreadSafe_Assert_kissfft_compare_result() throws Exception {
+        NoiseThreadSafe noise = Noise.real().threadSafe();
+        float[] input = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096.dat")).get();
+        float[] kissfftPrerecordedFFT = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096_result_real.dat")).get();
+
+        loopFor(100, TimeUnit.MILLISECONDS, () -> {
+            float[] fft = noise.fft(input);
+
+            for (int i = 0; i < input.length; i++) {
+                assertEquals(kissfftPrerecordedFFT[i], fft[i]);
+            }
+        });
+    }
+
     @Test
     public void testRealOptimized_Profile() throws Exception {
         NoiseOptimized noise = Noise.real().optimized().init(4096, false);
@@ -48,11 +70,18 @@ public class NoiseInstrumentationTest {
         noise.dispose();
     }
 
+    /**
+     * Assert that the output on a predefined signal of 4096 from kissfft is exactly the same for
+     * this library as it is for kissfft. The "prerecorded" FFT is created through the
+     * cpp_test_data_suite which simply compiles and runs kissfft on the input dataset in assets.
+     *
+     * Hence, if this test is green kissfft works as intended.
+     */
     @Test
-    public void testRealOptimized_Assert_kissfft() throws Exception {
+    public void testRealOptimized_Assert_kissfft_compare_result() throws Exception {
         NoiseOptimized noise = Noise.real().optimized().init(4096, true);
         float[] input = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096.dat")).get();
-        float[] kissfftPrerecordedFFT = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096_result.dat")).get();
+        float[] kissfftPrerecordedFFT = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096_result_real.dat")).get();
 
         loopFor(100, TimeUnit.MILLISECONDS, () -> {
             float[] fft = noise.fft(input);
@@ -75,6 +104,34 @@ public class NoiseInstrumentationTest {
         System.out.println("============");
     }
 
+    /**
+     * Assert that the output on a predefined signal of 4096 from kissfft is exactly the same for
+     * this library as it is for kissfft. The "prerecorded" FFT is created through the
+     * cpp_test_data_suite which simply compiles and runs kissfft on the input dataset in assets.
+     *
+     * Hence, if this test is green kissfft works as intended.
+     */
+    @Test
+    public void testImaginaryThreadSafe_Assert_kissfft_compare_result() throws Exception {
+        NoiseThreadSafe noise = Noise.imaginary().threadSafe();
+        float[] inputFromFile = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096.dat")).get();
+        float[] input = new float[4096 * 2];
+        float[] kissfftPrerecordedFFT = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096_result_imag.dat")).get();
+
+        for (int i = 0; i < inputFromFile.length; i++) {
+            input[i * 2] = inputFromFile[i];
+            input[i * 2 + 1] = inputFromFile[i];
+        }
+
+        loopFor(100, TimeUnit.MILLISECONDS, () -> {
+            float[] fft = noise.fft(input);
+
+            for (int i = 0; i < input.length; i++) {
+                assertEquals(kissfftPrerecordedFFT[i], fft[i]);
+            }
+        });
+    }
+
     @Test
     public void testImaginaryOptimized_Profile() throws Exception {
         NoiseOptimized noise = Noise.imaginary().optimized().init(4096, false);
@@ -90,6 +147,36 @@ public class NoiseInstrumentationTest {
     public void testImaginaryOptimized_internalStorage() throws Exception {
         NoiseOptimized noise = Noise.imaginary().optimized().init(4096, true);
         loopFor(100, TimeUnit.MILLISECONDS, () -> noise.fft(new float[4096]));
+        noise.dispose();
+    }
+
+    /**
+     * Assert that the output on a predefined signal of 4096 from kissfft is exactly the same for
+     * this library as it is for kissfft. The "prerecorded" FFT is created through the
+     * cpp_test_data_suite which simply compiles and runs kissfft on the input dataset in assets.
+     *
+     * Hence, if this test is green kissfft works as intended.
+     */
+    @Test
+    public void testImaginaryOptimized_Assert_kissfft_compare_result() throws Exception {
+        NoiseOptimized noise = Noise.imaginary().optimized().init(4096 * 2, true);
+        float[] inputFromFile = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096.dat")).get();
+        float[] input = new float[4096 * 2];
+        float[] kissfftPrerecordedFFT = new FloatsSource(InstrumentationRegistry.getTargetContext().getAssets().open("test/sample_signal_4096_result_imag.dat")).get();
+
+        for (int i = 0; i < inputFromFile.length; i++) {
+            input[i * 2] = inputFromFile[i];
+            input[i * 2 + 1] = inputFromFile[i];
+        }
+
+        loopFor(100, TimeUnit.MILLISECONDS, () -> {
+            float[] fft = noise.fft(input);
+
+            for (int i = 0; i < input.length; i++) {
+                assertEquals(kissfftPrerecordedFFT[i], fft[i]);
+            }
+        });
+
         noise.dispose();
     }
 

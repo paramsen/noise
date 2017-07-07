@@ -88,10 +88,6 @@ void readFloats(string path, float *into) {
 
   fseek(file, 4, SEEK_SET);
   fread(into, sizeof(float), 4096, file);
-
-  //for(int i = 0; i < 4096; i++) {
-  //  printf("%f", into[i]);
-  //}
 }
 
 

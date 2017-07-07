@@ -23,4 +23,16 @@ public class NoiseThreadSafe {
         fft.fft(in, out);
         return out;
     }
+
+    /**
+     * Allocates a new float[] to store result in which is returned for each invocation
+     *
+     * @param in data to be processed
+     * @return float[] out
+     */
+    public float[] fft(float[] in) {
+        float[] out = new float[in.length + 2];
+        fft.fft(in, out);
+        return out;
+    }
 }

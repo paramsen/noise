@@ -112,20 +112,20 @@ Java_com_paramsen_noise_NoiseNativeBridge_imaginaryThreadSafe(JNIEnv *env, jobje
 
     float *input = env->GetFloatArrayElements(jInput, 0);
     float *output = env->GetFloatArrayElements(jOutput, 0);
-    kiss_fft_cpx *fftInput = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize);
+    kiss_fft_cpx *fftInput = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize / 2);
 
-    for (int i = 0; i < inSize; i += 2) {
-        fftInput[i].r = input[i];
-        fftInput[i].i = input[i + 1];
+    for (int i = 0; i < inSize / 2; i++) {
+        fftInput[i].r = input[i * 2];
+        fftInput[i].i = input[i * 2 + 1];
     }
 
-    kiss_fft_cfg config = kiss_fft_alloc(inSize, 0, 0, 0);
-    kiss_fft_cpx *result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * outSize);
+    kiss_fft_cfg config = kiss_fft_alloc(inSize / 2, 0, 0, 0);
+    kiss_fft_cpx *result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * outSize / 2);
     kiss_fft(config, fftInput, result);
 
-    for (int i = 0; i < outSize; i += 2) {
-        output[i] = result[i].r;
-        output[i + 1] = result[i].i;
+    for (int i = 0; i < outSize / 2; i++) {
+        output[i * 2] = result[i].r;
+        output[i * 2 + 1] = result[i].i;
     }
 
     env->SetFloatArrayRegion(jOutput, 0, outSize, output);
@@ -141,9 +141,9 @@ Java_com_paramsen_noise_NoiseNativeBridge_imaginaryOptimizedCfg(JNIEnv *env, job
                                                                 jint inSize) {
     NoiseOptimizedImaginaryCfg *cfg = (NoiseOptimizedImaginaryCfg *) malloc(
             sizeof(NoiseOptimizedImaginaryCfg));
-    cfg->config = kiss_fft_alloc(inSize, 0, 0, 0);
-    cfg->fftInput = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize);
-    cfg->result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize);
+    cfg->config = kiss_fft_alloc(inSize / 2, 0, 0, 0);
+    cfg->fftInput = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize / 2);
+    cfg->result = (kiss_fft_cpx *) malloc(sizeof(kiss_fft_cpx) * inSize / 2);
 
     return (jlong) cfg;
 }
@@ -169,22 +169,22 @@ Java_com_paramsen_noise_NoiseNativeBridge_imaginaryOptimized(JNIEnv *env, jobjec
 
     if (outSize != inSize)
         __android_log_print(ANDROID_LOG_ERROR, "NATIVE_NOISE",
-                            "output len must equal input len. Read javadoc.");
+                            "output len (%d) must equal input len (%d). Read javadoc.", outSize, inSize);
 
     float *input = env->GetFloatArrayElements(jInput, 0);
     float *output = env->GetFloatArrayElements(jOutput, 0);
     NoiseOptimizedImaginaryCfg *cfg = (NoiseOptimizedImaginaryCfg *) cfgPointer;
 
-    for (int i = 0; i < inSize; i += 2) {
-        cfg->fftInput[i].r = input[i];
-        cfg->fftInput[i].i = input[i + 1];
+    for (int i = 0; i < inSize / 2; i++) {
+        cfg->fftInput[i].r = input[i * 2];
+        cfg->fftInput[i].i = input[i * 2 + 1];
     }
 
     kiss_fft(cfg->config, cfg->fftInput, cfg->result);
 
-    for (int i = 0; i < outSize; i += 2) {
-        output[i] = cfg->result[i].r;
-        output[i + 1] = cfg->result[i].i;
+    for (int i = 0; i < outSize / 2; i++) {
+        output[i * 2] = cfg->result[i].r;
+        output[i * 2 + 1] = cfg->result[i].i;
     }
 
     env->SetFloatArrayRegion(jOutput, 0, outSize, output);

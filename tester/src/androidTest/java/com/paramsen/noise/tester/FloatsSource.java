@@ -1,9 +1,8 @@
 package com.paramsen.noise.tester;
 
+import com.google.common.io.LittleEndianDataInputStream;
+
 import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -19,18 +18,19 @@ public class FloatsSource {
     }
 
     public float[] get() {
-        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(input))) {
+        try (LittleEndianDataInputStream dis = new LittleEndianDataInputStream(new BufferedInputStream(input))) {
             int size = dis.readInt();
             float[] floats = new float[size];
 
             float next = 0f;
             int read = 0;
 
-            while ((next = nextFloat(dis)) > Float.MIN_VALUE) {
+            while (read < size) {
+                next = nextFloat(dis);
                 floats[read++] = next;
             }
 
-            if(read != size - 1)
+            if (read != size)
                 throw new RuntimeException(String.format(Locale.US, "Not correct size, expected %d, but was %d", size, read));
 
             return floats;
@@ -39,9 +39,10 @@ public class FloatsSource {
         }
     }
 
-    private float nextFloat(DataInputStream dis) {
+    private float nextFloat(LittleEndianDataInputStream dis) {
         try {
-            return dis.readFloat();
+            float f = dis.readFloat();
+            return f;
         } catch (IOException e) {
             return Float.MIN_VALUE;
         }
