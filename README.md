@@ -22,31 +22,31 @@ but has an overhead of allocating memory for each invocation.
 
 #### Real input
 
-Instantiate an optimized instance, that is configured to compute DFT:s on input arrays of size 4096
-and that internally manages an output array.
+Instantiate an optimized instance, this example is configured to compute DFT:s on input arrays of size 4096
+and internally manages the output array.
 ```
 Noise noise = Noise.real()
     .optimized()
     .init(4096, true); //input size == 4096, internal output array
 ```
 
-Compute a DFT.
+Invoke the FFT on some input data.
 
 ```
 float[] realInput = new float[4096];
     
 // .. fill realInput with data
     
-// Compute DFT from realInput:
+// Compute the FFT with realInput:
     
-float[] computed = noise.fft(realInput);
+float[] dft = noise.fft(realInput);
     
-// The output array has the pairs of real+imaginary floats in a one dimensional array; even indeces
+// The result array has the pairs of real+imaginary floats in a one dimensional array; even indeces
 // are real, odd indeces are imaginary. DC bin is located at index 0, 1, nyquist at index n-2, n-1
     
-for(int i = 0; i < computed.length / 2; i++) {
-    float real = computed[i * 2];
-    float imaginary = computed[i * 2 + 1];
+for(int i = 0; i < dft.length / 2; i++) {
+    float real = dft[i * 2];
+    float imaginary = dft[i * 2 + 1];
     
     System.out.printf("index: %d, real: %.5f, imaginary: %.5f\n", i, real, imaginary);
 }
@@ -76,16 +76,16 @@ for(int i = 0; i < pairs.length; i++) {
     imaginaryInput[i * 2 + 1] = pairs[i].imaginary;
 }
     
-// Compute DFT from imaginaryInput:
+// Compute the FFT with imaginaryInput:
     
-float[] computed = noise.fft(realInput);
+float[] dft = noise.fft(realInput);
     
 // The output array has the pairs of real+imaginary floats in a one dimensional array; even indeces
 // are real, odd indeces are imaginary. DC bin is located at index 0, 1, nyquist at index n/2-2, n/2-1
     
-for(int i = 0; i < computed.length / 2; i++) {
-    float real = computed[i * 2];
-    float imaginary = computed[i * 2 + 1];
+for(int i = 0; i < dft.length / 2; i++) {
+    float real = dft[i * 2];
+    float imaginary = dft[i * 2 + 1];
     
     System.out.printf("index: %d, real: %.5f, imaginary: %.5f\n", i, real, imaginary);
 }
@@ -101,10 +101,6 @@ Include in Android Studio < 3.0 projects
 Or for Android Studio >= 3.0 with Gradle 4  projects
 
     implementation 'com.paramsen.noise:<version>'
-
-
-## Advanced
-..
 
 
 ## License
