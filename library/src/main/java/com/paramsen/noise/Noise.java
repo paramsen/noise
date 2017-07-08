@@ -32,8 +32,18 @@ public class Noise {
          * @return Instance that can be called concurrently with varying data sizes.
          */
         public NoiseThreadSafe threadSafe() {
-            if (real) return new NoiseThreadSafe(NoiseNativeBridge::realThreadSafe);
-            else return new NoiseThreadSafe(NoiseNativeBridge::imaginaryThreadSafe);
+            if (real) return new NoiseThreadSafe(new Func2() {
+                @Override
+                public void fft(float[] in, float[] out) {
+                    NoiseNativeBridge.realThreadSafe(in, out);
+                }
+            });
+            else return new NoiseThreadSafe(new Func2() {
+                @Override
+                public void fft(float[] in, float[] out) {
+                    NoiseNativeBridge.imaginaryThreadSafe(in, out);
+                }
+            });
         }
 
         /**
@@ -42,9 +52,49 @@ public class Noise {
          */
         public NoiseOptimized optimized() {
             if (real)
-                return new NoiseOptimized(NoiseNativeBridge::realOptimized, NoiseNativeBridge::realOptimizedCfg, inSize -> new float[inSize + 2], NoiseNativeBridge::realOptimizedCfgDispose);
+                return new NoiseOptimized(new Func3() {
+                    @Override
+                    public void fft(float[] in, float[] out, long cfgPointer) {
+                        NoiseNativeBridge.realOptimized(in, out, cfgPointer);
+                    }
+                }, new FuncO1<Long, Integer>() {
+                    @Override
+                    public Long call(Integer inSize1) {
+                        return NoiseNativeBridge.realOptimizedCfg(inSize1);
+                    }
+                }, new FuncO1<float[], Integer>() {
+                    @Override
+                    public float[] call(Integer inSize) {
+                        return new float[inSize + 2];
+                    }
+                }, new Func1<Long>() {
+                    @Override
+                    public void call(Long cfgPointer) {
+                        NoiseNativeBridge.realOptimizedCfgDispose(cfgPointer);
+                    }
+                });
             else
-                return new NoiseOptimized(NoiseNativeBridge::imaginaryOptimized, NoiseNativeBridge::imaginaryOptimizedCfg, float[]::new, NoiseNativeBridge::imaginaryOptimizedCfgDispose);
+                return new NoiseOptimized(new Func3() {
+                    @Override
+                    public void fft(float[] in, float[] out, long cfgPointer) {
+                        NoiseNativeBridge.imaginaryOptimized(in, out, cfgPointer);
+                    }
+                }, new FuncO1<Long, Integer>() {
+                    @Override
+                    public Long call(Integer inSize) {
+                        return NoiseNativeBridge.imaginaryOptimizedCfg(inSize);
+                    }
+                }, new FuncO1<float[], Integer>() {
+                    @Override
+                    public float[] call(Integer in) {
+                        return new float[in];
+                    }
+                }, new Func1<Long>() {
+                    @Override
+                    public void call(Long cfgPointer) {
+                        NoiseNativeBridge.imaginaryOptimizedCfgDispose(cfgPointer);
+                    }
+                });
         }
     }
 }
