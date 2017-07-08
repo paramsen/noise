@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
         disposable.add(src.subscribe(audioView::onWindow, { e -> Log.e(TAG, e.message) }))
         //FFTView
         disposable.add(src.compose(this::accumulate)
-                .filter { fft -> fft.size == 4096 }
                 .map(noise::fft)
                 .subscribe(fftView::onFFT, { e -> Log.e(TAG, e.message) }))
     }
@@ -85,7 +84,7 @@ class MainActivity : AppCompatActivity() {
 
                 return FloatArray(0)
             }
-        })
+        }).filter { fft -> fft.size == 4096 } //filter only the emissions of complete 4096 windows
     }
 
     private fun requestAudio(): Boolean {
