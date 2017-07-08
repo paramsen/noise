@@ -34,3 +34,5 @@ dependencies {
     })
     testImplementation 'junit:junit:4.12'
 }
+
+apply from : 'https://raw.githubusercontent.com/jimmy0251/gradle-bintray-mvn-push/master/gradle-mvn-push.gradle'
