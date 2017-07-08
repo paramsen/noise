@@ -29,13 +29,6 @@ android {
 }
 
 dependencies {
-    //=== Test
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    testImplementation 'junit:junit:4.12'
-    //=== Test
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
