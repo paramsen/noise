@@ -28,7 +28,4 @@ android {
     }
 }
 
-dependencies {
-}
-
 //apply from : 'https://raw.githubusercontent.com/jimmy0251/gradle-bintray-mvn-push/master/gradle-mvn-push.gradle'
