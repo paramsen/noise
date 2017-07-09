@@ -39,6 +39,8 @@ public class NoiseOptimized {
      *
      * @param internalStorage if true, an internal float[] will be initialized which calls to
      *                        fft(float[]) will return with the computation result.
+     *
+     * @return This for chaining
      */
     public NoiseOptimized init(int inSize, boolean internalStorage) {
         this.inSize = inSize;

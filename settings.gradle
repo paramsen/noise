@@ -1,1 +1,1 @@
-include ':library', ':tester', ':sample'
+include ':noise', ':tester', ':sample'

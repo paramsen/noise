@@ -49,6 +49,8 @@ public class Noise {
         /**
          * Performs computations nearly 2x faster than threadSafe(), but must be called sequentially
          * with a fixed data size. Initialize by calling init(int, bool) before calling fft(float[])
+         *
+         * @return NoiseOptimized
          */
         public NoiseOptimized optimized() {
             if (real)

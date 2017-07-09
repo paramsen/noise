@@ -1,13 +1,18 @@
 apply plugin: 'com.android.library'
 
+def VERSION_NAME = "0.1.2"
+def VERSION_CODE = 1
+
+version = VERSION_NAME
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -28,4 +33,4 @@ android {
     }
 }
 
-//apply from : 'https://raw.githubusercontent.com/jimmy0251/gradle-bintray-mvn-push/master/gradle-mvn-push.gradle'
+apply from : 'bintray.gradle'
