@@ -2,10 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 android {
+    signingConfigs {
+        debug {
+            keyAlias 'qqqqqq'
+            keyPassword 'qqqqqq'
+            storeFile file('/Users/parnilsamsen/projects/personal/android/kissfft/sample/debug.jks')
+            storePassword 'qqqqqq'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "26.0.0"
-
-
     defaultConfig {
         applicationId "com.paramsen.noise.sample"
         minSdkVersion 16
@@ -26,16 +32,25 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    flavorDimensions 'sample'
+    productFlavors {
+        devel {
+            signingConfig signingConfigs.debug
+            versionNameSuffix '-devel'
+            dimension 'sample'
+        }
+        prod {
+            versionNameSuffix '-prod'
+            dimension 'sample'
+        }
+    }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
-
     implementation 'com.android.support:appcompat-v7:25.4.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-
-    implementation project (':noise')
+    implementation project(':noise')
 }

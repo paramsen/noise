@@ -24,8 +24,8 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-task readme {
-    doLast { //:noise must setup first
+task release(dependsOn: ":noise:bintrayUpload") {
+    doLast {
         def input = new File("./README.template")
         def output = new File("./README.md")
 
@@ -44,5 +44,7 @@ task readme {
 
         writer.write(template)
         writer.flush()
+
+        println("README.md generated from template")
     }
 }

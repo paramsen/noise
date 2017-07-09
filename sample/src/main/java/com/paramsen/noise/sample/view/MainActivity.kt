@@ -17,6 +17,7 @@ import com.paramsen.noise.sample.source.AudioSource
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -51,9 +52,10 @@ class MainActivity : AppCompatActivity() {
 
         //AudioView
         disposable.add(src.subscribe(audioView::onWindow, { e -> Log.e(TAG, e.message) }))
-        //FFTView
+        //FFTBandView
         disposable.add(src.compose(this::accumulate)
                 .map(noise::fft)
+                .observeOn(Schedulers.computation())
                 .subscribe(fftView::onFFT, { e -> Log.e(TAG, e.message) }))
     }
 
