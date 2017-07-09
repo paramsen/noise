@@ -1,13 +1,9 @@
 package com.paramsen.noise.sample.view
 
-import android.Manifest
 import android.Manifest.permission.RECORD_AUDIO
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.support.v4.content.ContextCompat.checkSelfPermission
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -52,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         //AudioView
         disposable.add(src.subscribe(audioView::onWindow, { e -> Log.e(TAG, e.message) }))
-        //FFTBandView
+        //FFTView
         disposable.add(src.compose(this::accumulate)
                 .map(noise::fft)
                 .observeOn(Schedulers.computation())
