@@ -1,18 +1,17 @@
 package com.paramsen.noise.sample.view
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
-import android.view.SurfaceHolder
-import android.view.SurfaceView
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * @author Pär Amsen 06/2017
  */
-class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SurfaceView(context, attrs), FFTView {
+class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SimpleSurface(context, attrs), FFTView {
     val TAG = javaClass.simpleName!!
 
     val sec = 10
@@ -20,8 +19,6 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SurfaceView(conte
     val history = hz * sec
     val resolution = 256
     val ffts: ArrayDeque<FloatArray> = ArrayDeque()
-
-    val active = AtomicBoolean(false)
 
     val paintBandsFill: Paint = Paint()
     val bg: Paint = Paint()
@@ -39,25 +36,12 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SurfaceView(conte
         paintText.color = Color.parseColor("#AAFFFFFF")
         paintText.style = Paint.Style.FILL
         paintText.textSize = 12f.px
-
-        holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-            }
-
-            override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                active.set(false)
-            }
-
-            override fun surfaceCreated(holder: SurfaceHolder?) {
-                active.set(true)
-            }
-        })
     }
 
     var min = Float.MAX_VALUE
     var max = Float.MIN_VALUE
 
-    fun drawFFT(canvas: Canvas) {
+    fun drawFFT(canvas: Canvas): Canvas {
 
         val fftW = width / history.toFloat()
         val bandWH = height / resolution.toFloat()
@@ -82,17 +66,19 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SurfaceView(conte
                 paintBandsFill.color = Color.rgb(pow, pow, pow)
                 canvas.drawRect(x - fftW, y - bandWH, x, y, paintBandsFill)
 
-                if(mag > max) {
+                if (mag > max) {
                     max = mag
                     Log.d(TAG, "=== MAX: " + max.toString())
                 }
 
-                if(mag < min) {
+                if (mag < min) {
                     min = mag
                     Log.d(TAG, "=== MIN: " + min.toString())
                 }
             }
         }
+
+        return canvas
     }
 
     override fun onFFT(fft: FloatArray) {
@@ -123,10 +109,6 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SurfaceView(conte
                 ffts.removeLast()
         }
 
-        if (active.get()) {
-            val canvas = holder.lockCanvas()
-            drawFFT(canvas)
-            holder.unlockCanvasAndPost(canvas)
-        }
+        drawSurface(this::drawFFT)
     }
 }

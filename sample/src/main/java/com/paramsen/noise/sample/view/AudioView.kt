@@ -6,13 +6,14 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
+import android.view.SurfaceView
 import android.view.View
 import java.util.*
 
 /**
  * @author Pär Amsen 06/2017
  */
-class AudioView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
+class AudioView(context: Context, attrs: AttributeSet?) : SimpleSurface(context, attrs) {
     val sec = 10
     val hz = 44100
     val skip = 128
@@ -33,7 +34,7 @@ class AudioView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         paintText.textSize = 12f.px
     }
 
-    override fun onDraw(canvas: Canvas) {
+    fun drawAudio(canvas: Canvas): Canvas {
         path.reset()
 
         synchronized(audio) {
@@ -49,6 +50,8 @@ class AudioView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         canvas.drawColor(Color.GRAY)
         canvas.drawPath(path, paintAudio)
         canvas.drawText("AUDIO", 16f.px, 24f.px, paintText)
+
+        return canvas
     }
 
     fun onWindow(window: FloatArray) {
@@ -66,8 +69,8 @@ class AudioView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
             while (audio.size > history)
                 audio.removeLast()
-
-            postInvalidate()
         }
+
+        drawSurface(this::drawAudio)
     }
 }
