@@ -52,7 +52,10 @@ class MainActivity : AppCompatActivity() {
         disposable.add(src.compose(this::accumulate)
                 .map(noise::fft)
                 .observeOn(Schedulers.computation())
-                .subscribe(fftView::onFFT, { e -> Log.e(TAG, e.message) }))
+                .subscribe({ fft ->
+                    fftHeatMapView.onFFT(fft)
+                    fftBandView.onFFT(fft)
+                }, { e -> Log.e(TAG, e.message) }))
     }
 
     /**

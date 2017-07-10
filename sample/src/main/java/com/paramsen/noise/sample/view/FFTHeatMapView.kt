@@ -24,7 +24,7 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SimpleSurface(con
     val bg: Paint = Paint()
     val paintText: Paint = Paint()
 
-    val hot = 9045099490000
+    val hot = 1000000000
 
     init {
         paintBandsFill.color = Color.parseColor("#33FF2C00")
@@ -61,9 +61,9 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SimpleSurface(con
             for (j in 0..resolution - 1) {
                 y = height - (bandWH * j)
                 val mag = band?.get(j) ?: .0f
-                val pow = mag.toInt()
+                val pow = Math.min(mag.toDouble() / hot, 1.0)
 
-                paintBandsFill.color = Color.rgb(pow, pow, pow)
+                paintBandsFill.color = Color.argb((255 * pow).toInt(), 200, 255, 255)
                 canvas.drawRect(x - fftW, y - bandWH, x, y, paintBandsFill)
 
                 if (mag > max) {
@@ -77,6 +77,8 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SimpleSurface(con
                 }
             }
         }
+
+        canvas.drawText("FFT Band Histogram", 16f.px, 24f.px, paintText)
 
         return canvas
     }

@@ -11,7 +11,7 @@ import java.lang.System.arraycopy
 /**
  * @author Pär Amsen 06/2017
  */
-class FFTBandView(context: Context, attrs: AttributeSet?) : View(context, attrs), FFTView {
+class FFTBandView(context: Context, attrs: AttributeSet?) : SimpleSurface(context, attrs), FFTView {
     val fft: FloatArray = FloatArray(4096)
     val paintBandsFill: Paint = Paint()
     val paintBands: Paint = Paint()
@@ -22,7 +22,7 @@ class FFTBandView(context: Context, attrs: AttributeSet?) : View(context, attrs)
         paintBandsFill.color = Color.parseColor("#33FF2C00")
         paintBandsFill.style = Paint.Style.FILL
 
-        paintBands.color = Color.parseColor("#FF2C00")
+        paintBands.color = Color.parseColor("#AAFF2C00")
         paintBands.strokeWidth = 1f
         paintBands.style = Paint.Style.STROKE
 
@@ -35,9 +35,9 @@ class FFTBandView(context: Context, attrs: AttributeSet?) : View(context, attrs)
         paintText.textSize = 12f.px
     }
 
-    override fun onDraw(canvas: Canvas) {
+    fun drawAudio(canvas: Canvas): Canvas {
         val size = 4096
-        val bands = 32
+        val bands = 256
         val bandSize = size / bands
         val maxConst = 1750000000 //reference max value for accum magnitude
         var average = .0f
@@ -57,20 +57,22 @@ class FFTBandView(context: Context, attrs: AttributeSet?) : View(context, attrs)
 
             average += accum;
 
-            canvas.drawRect(width * (i / bands.toFloat()), height - (height * (accum / maxConst)) - height * .02f, width * (i / bands.toFloat()) + width / bands.toFloat(), height.toFloat(), paintBandsFill)
-            canvas.drawRect(width * (i / bands.toFloat()), height - (height * (accum / maxConst)) - height * .02f, width * (i / bands.toFloat()) + width / bands.toFloat(), height.toFloat(), paintBands)
+            canvas.drawRect(width * (i / bands.toFloat()), height - (height * Math.min(accum / maxConst.toDouble(), 1.0).toFloat()) - height * .02f, width * (i / bands.toFloat()) + width / bands.toFloat(), height.toFloat(), paintBandsFill)
+            canvas.drawRect(width * (i / bands.toFloat()), height - (height * Math.min(accum / maxConst.toDouble(), 1.0).toFloat()) - height * .02f, width * (i / bands.toFloat()) + width / bands.toFloat(), height.toFloat(), paintBands)
         }
 
         average /= bands
 
         canvas.drawLine(0f, height - (height * (average / maxConst)) - height * .02f, width.toFloat(), height - (height * (average / maxConst)) - height * .02f, paintAvg)
-        canvas.drawText("FFT", 16f.px, 24f.px, paintText)
+        canvas.drawText("FFT Bands", 16f.px, 24f.px, paintText)
+
+        return canvas
     }
 
     override fun onFFT(fft: FloatArray) {
         synchronized(this.fft) {
             arraycopy(fft, 2, this.fft, 0, fft.size - 2)
-            postInvalidate()
+            drawSurface(this::drawAudio)
         }
     }
 }
