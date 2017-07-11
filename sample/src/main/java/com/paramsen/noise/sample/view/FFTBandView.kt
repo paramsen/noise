@@ -16,7 +16,7 @@ class FFTBandView(context: Context, attrs: AttributeSet?) : SimpleSurface(contex
     val paintBandsFill: Paint = Paint()
     val paintBands: Paint = Paint()
     val paintAvg: Paint = Paint()
-    val paintText: Paint = Paint()
+    val paintText: Paint = textPaint()
 
     init {
         paintBandsFill.color = Color.parseColor("#33FF2C00")
@@ -29,15 +29,11 @@ class FFTBandView(context: Context, attrs: AttributeSet?) : SimpleSurface(contex
         paintAvg.color = Color.parseColor("#33FFFFFF")
         paintAvg.strokeWidth = 1f
         paintAvg.style = Paint.Style.STROKE
-
-        paintText.color = Color.parseColor("#AAFFFFFF")
-        paintText.style = Paint.Style.FILL
-        paintText.textSize = 12f.px
     }
 
     fun drawAudio(canvas: Canvas): Canvas {
         val size = 4096
-        val bands = 256
+        val bands = 64
         val bandSize = size / bands
         val maxConst = 1750000000 //reference max value for accum magnitude
         var average = .0f

@@ -20,7 +20,7 @@ object Spectogram {
     private val spectogram: IntArray = generate()
 
     fun color(f: Double): Int {
-        return spectogram[Math.min(((256 - 1) * f), range.toDouble() - 1).toInt()]
+        return spectogram[Math.min(((range - 1) * f), range.toDouble() - 1).toInt()]
     }
 
     private fun generate(): IntArray {
@@ -31,8 +31,6 @@ object Spectogram {
         for (i in 0..range - 1) {
             val f = i / range.toDouble()
             var f1 = f * 4.0 % 1.0
-
-            println("=== $f1")
 
             val blend = when ((f * 100).toInt()) {
                 in 0..24 -> Pair(a, b)

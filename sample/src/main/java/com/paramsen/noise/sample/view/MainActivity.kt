@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             val out = FloatArray(4096)
 
             override fun apply(window: FloatArray): FloatArray {
-                window.map { it * 10 }.forEach(buf::addLast)
+                window.map { it * 5 }.forEach(buf::addLast)
 
                 if (buf.size >= out.size) {
                     for (i in 0..out.size - 1)

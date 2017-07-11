@@ -16,22 +16,18 @@ import java.util.*
 class AudioView(context: Context, attrs: AttributeSet?) : SimpleSurface(context, attrs) {
     val sec = 10
     val hz = 44100
-    val skip = 128
-    val history = hz * sec / skip
+    val merge = 128
+    val history = hz * sec / merge
     val audio: ArrayDeque<Float> = ArrayDeque()
 
     val paintAudio: Paint = Paint()
-    val paintText: Paint = Paint()
+    val paintText: Paint = textPaint()
     val path: Path = Path()
 
     init {
         paintAudio.color = Color.GREEN
         paintAudio.strokeWidth = 0f
         paintAudio.style = Paint.Style.STROKE
-
-        paintText.color = Color.parseColor("#AAFFFFFF")
-        paintText.style = Paint.Style.FILL
-        paintText.textSize = 12f.px
     }
 
     fun drawAudio(canvas: Canvas): Canvas {
@@ -59,10 +55,10 @@ class AudioView(context: Context, attrs: AttributeSet?) : SimpleSurface(context,
             var accum = 0f
 
             for ((i, sample) in window.withIndex()) {
-                if (i > 0 && i % skip != 0)
+                if (i > 0 && i % merge != 0)
                     accum += sample
                 else {
-                    audio.addFirst(accum / skip)
+                    audio.addFirst(accum / merge)
                     accum = 0f
                 }
             }
