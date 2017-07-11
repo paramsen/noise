@@ -12,8 +12,6 @@ import java.util.*
  * @author Pär Amsen 06/2017
  */
 class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(context, attrs), FFTView {
-    val TAG = javaClass.simpleName!!
-
     val sec = 10
     val hz = 44100 / 4096
     val history = hz * sec
@@ -21,17 +19,22 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
     val ffts: ArrayDeque<FloatArray> = ArrayDeque()
 
     val paintBandsFill: Paint = Paint()
+    val bg: Paint = Paint()
     val paintText: Paint = Paint()
 
-    val hot = 30000
+    val hot = 50000
 
     init {
-        paintBandsFill.color = Color.parseColor("#33FF2C00")
+        paintBandsFill.color = Color.parseColor("#FF2C00")
         paintBandsFill.style = Paint.Style.FILL
 
         paintText.color = Color.parseColor("#AAFFFFFF")
         paintText.style = Paint.Style.FILL
         paintText.textSize = 12f.px
+
+        bg.color = Color.RED
+        bg.style = Paint.Style.FILL_AND_STROKE
+        bg.strokeWidth = 10f
     }
 
     var min = Float.MAX_VALUE
@@ -46,7 +49,7 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
         var y: Float
         var band: FloatArray? = null
 
-        canvas.drawColor(Color.rgb(24, 29, 24))
+        canvas.drawColor(Color.rgb(20, 20, 25))
         for (i in 0..ffts.size - 1) {
             synchronized(ffts) {
                 band = ffts.elementAt(i)

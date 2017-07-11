@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+
+def VERSION_NAME = '0.5.5'
+def VERSION_CODE = 1
+
 android {
     signingConfigs {
         debug {
@@ -16,10 +20,12 @@ android {
         applicationId "com.paramsen.noise.sample"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        setProperty("archivesBaseName", "NoiseDemo-${versionName}")
 
     }
     buildTypes {

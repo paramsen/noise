@@ -56,6 +56,8 @@ class MainActivity : AppCompatActivity() {
                     fftHeatMapView.onFFT(fft)
                     fftBandView.onFFT(fft)
                 }, { e -> Log.e(TAG, e.message) }))
+
+        tip.schedule()
     }
 
     /**
