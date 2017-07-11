@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.paramsen.noise.sample.view.FFTHeatMapView
+    <com.paramsen.noise.sample.view.FFTSpectogramView
         android:id="@+id/fftHeatMapView"
         android:layout_width="0dp"
         android:layout_height="0dp"

@@ -64,7 +64,7 @@ class FFTBandView(context: Context, attrs: AttributeSet?) : SimpleSurface(contex
         average /= bands
 
         canvas.drawLine(0f, height - (height * (average / maxConst)) - height * .02f, width.toFloat(), height - (height * (average / maxConst)) - height * .02f, paintAvg)
-        canvas.drawText("FFT Bands", 16f.px, 24f.px, paintText)
+        canvas.drawText("FFT BANDS", 16f.px, 24f.px, paintText)
 
         return canvas
     }

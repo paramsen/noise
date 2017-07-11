@@ -11,27 +11,23 @@ import java.util.*
 /**
  * @author Pär Amsen 06/2017
  */
-class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SimpleSurface(context, attrs), FFTView {
+class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(context, attrs), FFTView {
     val TAG = javaClass.simpleName!!
 
     val sec = 10
     val hz = 44100 / 4096
     val history = hz * sec
-    val resolution = 256
+    val resolution = 512
     val ffts: ArrayDeque<FloatArray> = ArrayDeque()
 
     val paintBandsFill: Paint = Paint()
-    val bg: Paint = Paint()
     val paintText: Paint = Paint()
 
-    val hot = 1000000000
+    val hot = 30000
 
     init {
         paintBandsFill.color = Color.parseColor("#33FF2C00")
         paintBandsFill.style = Paint.Style.FILL
-
-        bg.color = Color.parseColor("#052773")
-        bg.style = Paint.Style.FILL
 
         paintText.color = Color.parseColor("#AAFFFFFF")
         paintText.style = Paint.Style.FILL
@@ -50,7 +46,7 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SimpleSurface(con
         var y: Float
         var band: FloatArray? = null
 
-        canvas.drawColor(Color.parseColor("#11254C"))
+        canvas.drawColor(Color.rgb(24, 29, 24))
         for (i in 0..ffts.size - 1) {
             synchronized(ffts) {
                 band = ffts.elementAt(i)
@@ -61,12 +57,11 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SimpleSurface(con
             for (j in 0..resolution - 1) {
                 y = height - (bandWH * j)
                 val mag = band?.get(j) ?: .0f
-                val pow = Math.min(mag.toDouble() / hot, 1.0)
 
-                paintBandsFill.color = Color.argb((255 * pow).toInt(), 200, 255, 255)
+                paintBandsFill.color = Spectogram.color(Math.min(mag / hot.toDouble(), 1.0))
                 canvas.drawRect(x - fftW, y - bandWH, x, y, paintBandsFill)
 
-                if (mag > max) {
+                /*if (mag > max) {
                     max = mag
                     Log.d(TAG, "=== MAX: " + max.toString())
                 }
@@ -74,11 +69,18 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SimpleSurface(con
                 if (mag < min) {
                     min = mag
                     Log.d(TAG, "=== MIN: " + min.toString())
-                }
+                }*/
             }
         }
 
-        canvas.drawText("FFT Band Histogram", 16f.px, 24f.px, paintText)
+        for (i in 0..height) {
+            val f = i / height.toDouble()
+            paintBandsFill.color = Spectogram.color(1.0 - f)
+
+            canvas.drawRect(0f, i.toFloat(), 10f, i + 1f, paintBandsFill)
+        }
+
+        canvas.drawText("FFT SPECTOGRAM", 16f.px, 24f.px, paintText)
 
         return canvas
     }
@@ -92,16 +94,28 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SimpleSurface(con
 
         val bands = FloatArray(resolution)
         var accum: Float
+        var avg = 0f
 
         for (i in 0..resolution - 1) {
             accum = .0f
 
             for (j in 0..fft.size / resolution - 1 step 2) {
-                accum += (Math.pow(fft[i * j].toDouble(), 2.0) + Math.pow(fft[i * j + 1].toDouble(), 2.0)).toFloat() //magnitudes
+                accum += (Math.sqrt(Math.pow(fft[i * j].toDouble(), 2.0) + Math.pow(fft[i * j + 1].toDouble(), 2.0))).toFloat() //magnitudes
             }
 
             accum /= resolution
             bands[i] = accum
+            avg += accum
+        }
+
+        avg /= resolution
+
+        for (i in 0..resolution - 1) {
+            if (bands[i] < avg / 2) {
+                bands[i] * 100000f
+            } /*else {
+                bands[i] * 10000f
+            }*/
         }
 
         synchronized(ffts) {
@@ -113,4 +127,6 @@ class FFTHeatMapView(context: Context, attrs: AttributeSet?) : SimpleSurface(con
 
         drawSurface(this::drawFFT)
     }
+
+
 }
