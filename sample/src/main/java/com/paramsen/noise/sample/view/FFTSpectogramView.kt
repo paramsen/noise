@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.Log
 import java.util.*
@@ -18,7 +17,7 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
 
     val sec = 10
     val hz = 44100 / 4096
-    val fps= 1000 / hz
+    val fps = 1000 / hz
     val history = hz * sec
     var resolution = 512
     val ffts = ArrayDeque<FloatArray>()
@@ -92,7 +91,7 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
 
             canvas.drawText("FFT SPECTOGRAM", 16f.px, 24f.px, paintText)
 
-            if(msg?.first ?: 0 > System.currentTimeMillis()) {
+            if (msg?.first ?: 0 > System.currentTimeMillis()) {
                 canvas.drawText(msg?.second, (width - paintMsg.measureText(msg?.second)) / 2, height - 16f.px, paintMsg)
             }
         })

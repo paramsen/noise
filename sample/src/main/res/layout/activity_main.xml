@@ -62,4 +62,11 @@
             android:text="Try whistling!"
             android:textColor="#888" />
     </com.paramsen.noise.sample.view.TipView>
+
+    <com.paramsen.noise.sample.view.InfoView
+        android:id="@+id/info"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </android.support.constraint.ConstraintLayout>

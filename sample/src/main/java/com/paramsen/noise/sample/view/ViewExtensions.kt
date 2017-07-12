@@ -5,6 +5,7 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.view.View
 import android.view.ViewPropertyAnimator
 
 /**
@@ -34,8 +35,8 @@ val errTextPaint: () -> Paint = {
     }
 }
 
-fun ViewPropertyAnimator.onEnd(then: () -> Unit) {
-    this.setListener(object: Animator.AnimatorListener {
+fun ViewPropertyAnimator.onEnd(then: () -> Unit): ViewPropertyAnimator {
+    this.setListener(object : Animator.AnimatorListener {
         override fun onAnimationRepeat(animation: Animator?) {
         }
 
@@ -49,4 +50,30 @@ fun ViewPropertyAnimator.onEnd(then: () -> Unit) {
         override fun onAnimationStart(animation: Animator?) {
         }
     })
+
+    return this
+}
+
+fun ViewPropertyAnimator.onTerminate(then: () -> Unit): ViewPropertyAnimator {
+    this.setListener(object : Animator.AnimatorListener {
+        override fun onAnimationRepeat(animation: Animator?) {
+        }
+
+        override fun onAnimationEnd(animation: Animator?) {
+            then()
+        }
+
+        override fun onAnimationCancel(animation: Animator?) {
+            then()
+        }
+
+        override fun onAnimationStart(animation: Animator?) {
+        }
+    })
+
+    return this
+}
+
+fun View.padding(i: Int) {
+    setPadding(i, i, i, i)
 }

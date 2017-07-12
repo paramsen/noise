@@ -5,13 +5,18 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.View
 import java.lang.System.arraycopy
 
 /**
  * @author Pär Amsen 06/2017
  */
 class FFTBandView(context: Context, attrs: AttributeSet?) : SimpleSurface(context, attrs), FFTView {
+    val size = 4096
+    val bands = 64
+    val bandSize = size / bands
+    val maxConst = 1750000000 //reference max value for accum magnitude
+    var average = .0f
+
     val fft: FloatArray = FloatArray(4096)
     val paintBandsFill: Paint = Paint()
     val paintBands: Paint = Paint()
@@ -32,12 +37,6 @@ class FFTBandView(context: Context, attrs: AttributeSet?) : SimpleSurface(contex
     }
 
     fun drawAudio(canvas: Canvas): Canvas {
-        val size = 4096
-        val bands = 64
-        val bandSize = size / bands
-        val maxConst = 1750000000 //reference max value for accum magnitude
-        var average = .0f
-
         canvas.drawColor(Color.DKGRAY)
         for (i in 0..bands - 1) {
             var accum = .0f

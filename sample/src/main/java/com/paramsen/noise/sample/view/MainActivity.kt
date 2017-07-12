@@ -1,13 +1,19 @@
 package com.paramsen.noise.sample.view
 
 import android.Manifest.permission.RECORD_AUDIO
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat.checkSelfPermission
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import com.paramsen.noise.Noise
+import com.paramsen.noise.sample.BuildConfig
 import com.paramsen.noise.sample.R
 import com.paramsen.noise.sample.source.AudioSource
 import io.reactivex.Flowable
@@ -17,11 +23,13 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
+
 class MainActivity : AppCompatActivity() {
     val TAG = javaClass.simpleName!!
 
     val disposable: CompositeDisposable = CompositeDisposable()
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -104,5 +112,16 @@ class MainActivity : AppCompatActivity() {
 
         if (grantResults[0] == PERMISSION_GRANTED)
             start()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        info.onShow()
+
+        return true
     }
 }
