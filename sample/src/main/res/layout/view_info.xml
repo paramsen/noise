@@ -20,10 +20,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        style="@style/Ripple"
         android:id="@+id/close"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:paddingBottom="8dp"
         android:paddingLeft="8dp"

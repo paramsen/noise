@@ -3,6 +3,7 @@ package com.paramsen.noise.sample.view
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
@@ -39,11 +40,28 @@ class InfoView(context: Context?, attrs: AttributeSet?) : ConstraintLayout(conte
         clearAnimation()
 
         visibility = View.VISIBLE
-        if(alpha != 1.0f) alpha = 1f
 
-        ViewAnimationUtils.createCircularReveal(this, width - (12f + 8f).px.toInt(), 0, width / 20f, Math.hypot(width.toDouble(), height.toDouble()).toFloat())
-                .setDuration(300)
-                .start()
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if(alpha != 1.0f) alpha = 1f
+
+            ViewAnimationUtils.createCircularReveal(this, width - (12f + 8f).px.toInt(), 0, width / 20f, Math.hypot(width.toDouble(), height.toDouble()).toFloat())
+                    .setDuration(300)
+                    .start()
+        } else {
+            val oldY = y
+            alpha = 0f
+            y = -20f
+
+            animate().alpha(1f)
+                    .y(20f.px)
+                    .setDuration(200)
+                    .setInterpolator(AccelerateInterpolator())
+                    .onTerminate {
+                        visibility = View.INVISIBLE
+                        alpha = 1f
+                        y = oldY
+                    }.start()
+        }
     }
 
     fun onClose() {
