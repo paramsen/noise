@@ -23,7 +23,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
     val TAG = javaClass.simpleName!!
@@ -81,23 +80,33 @@ class MainActivity : AppCompatActivity() {
      * Output windows of 4096 len, ~10/sec for 44.1khz, accumulates for FFT
      */
     private fun accumulate(o: Flowable<FloatArray>): Flowable<FloatArray> {
+        val size = 4096
+
         return o.map(object : Function<FloatArray, FloatArray> {
-            val buf = ArrayDeque<Float>()
-            val out = FloatArray(4096)
+            val buf = FloatArray(size * 2)
+            val empty = FloatArray(0)
+            var c = 0
 
             override fun apply(window: FloatArray): FloatArray {
-                window.map { it * 5 }.forEach(buf::addLast)
+                System.arraycopy(window, 0, buf, c, window.size)
+                c += window.size
 
-                if (buf.size >= out.size) {
-                    for (i in 0..out.size - 1)
-                        out[i] = buf.pop()
+                if (c >= size) {
+                    val out = FloatArray(size)
+                    System.arraycopy(buf, 0, out, 0, size)
+
+                    if(c > size) {
+                        System.arraycopy(buf, c % size, buf, 0, c % size)
+                    }
+
+                    c = 0
 
                     return out
                 }
 
-                return FloatArray(0)
+                return empty
             }
-        }).filter { fft -> fft.size == 4096 } //filter only the emissions of complete 4096 windows
+        }).filter { fft -> fft.size == size } //filter only the emissions of complete 4096 windows
     }
 
     private fun requestAudio(): Boolean {

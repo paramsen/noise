@@ -19,9 +19,7 @@ object Spectogram {
     private val range = 256
     private val spectogram: IntArray = generate()
 
-    fun color(f: Double): Int {
-        return spectogram[Math.min(((range - 1) * f), range.toDouble() - 1).toInt()]
-    }
+    fun color(f: Double): Int = spectogram[Math.min(((range - 1) * f), range.toDouble() - 1).toInt()]
 
     private fun generate(): IntArray {
         Log.d(TAG, "generate spectogram colors")
@@ -48,7 +46,5 @@ object Spectogram {
         return spectogram
     }
 
-    private fun rgb(rgb: List<Int>): Int {
-        return Color.rgb(rgb[0], rgb[1], rgb[2])
-    }
+    private fun rgb(rgb: List<Int>): Int = Color.rgb(rgb[0], rgb[1], rgb[2])
 }

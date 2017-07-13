@@ -23,28 +23,26 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
     val ffts = ArrayDeque<FloatArray>()
 
     val paintSpectogram: Paint = Paint()
-    val bg: Paint = Paint()
     val paintText: Paint = textPaint()
     val paintMsg: Paint = errTextPaint()
+    val bg = Color.rgb(20, 20, 25)
 
-    val hot = 50000
+    val hot = 30000
 
     val drawTimes = ArrayDeque<Long>()
     var msg: Pair<Long, String>? = null
 
+    var lastAvg = Pair(System.currentTimeMillis(), 0)
+
     init {
         paintSpectogram.color = Color.parseColor("#FF2C00")
         paintSpectogram.style = Paint.Style.FILL
-
-        bg.color = Color.RED
-        bg.style = Paint.Style.FILL_AND_STROKE
-        bg.strokeWidth = 10f
     }
 
     fun drawFFT(canvas: Canvas): Canvas {
         // If rendering is causing backpressure [and thus fps drop], lower resolution + show message
         // ignore if downsampling goes too far (< 32)
-        if (resolution > 32 && drawTimes.size >= history / 4 && drawTimes.sum().div(drawTimes.size) > fps) {
+        if (resolution > 32 && drawTimes.size >= history / 4 && getAvg() > fps) {
             Log.w(TAG, "Draw hz exceeded 60")
             synchronized(ffts) {
                 ffts.clear()
@@ -65,7 +63,7 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
             var y: Float
             var band: FloatArray? = null
 
-            canvas.drawColor(Color.rgb(20, 20, 25))
+            canvas.drawColor(bg)
             for (i in 0..ffts.size - 1) {
                 synchronized(ffts) {
                     band = ffts.elementAtOrNull(i)
@@ -121,11 +119,7 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
         avg /= resolution
 
         for (i in 0..resolution - 1) {
-            if (bands[i] < avg / 2) {
-                bands[i] * 100000f
-            } /*else {
-                bands[i] * 10000f
-            }*/
+            if (bands[i] < avg / 2) bands[i] * 1000f
         }
 
         synchronized(ffts) {
@@ -135,9 +129,14 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
                 ffts.removeLast()
         }
 
-
         drawSurface(this::drawFFT)
     }
 
+    private fun getAvg(): Int {
+        if (System.currentTimeMillis() - lastAvg.first > 1000) {
+            lastAvg = Pair(System.currentTimeMillis(), if (drawTimes.size > 0) drawTimes.sum().div(drawTimes.size).toInt() else 0)
+        }
 
+        return lastAvg.second
+    }
 }
