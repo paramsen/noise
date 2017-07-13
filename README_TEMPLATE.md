@@ -13,6 +13,10 @@ However, a low level JNI api is available as well.
 ## Sample app
 Watch Noise compute FFT in real time from your microphone, the sample app is on [Google Play][play]!
 
+<p align="left">
+  <img alt="Sample app preview" src="sample_preview.gif">
+</p>
+
 ## Get started
 
 Include in Android Studio < 3.0 projects
