@@ -168,7 +168,7 @@ Noise is licensed under the Apache 2.0.
 Kissfft is licensed under the Revised BSD License.
 
 [kissfft]: https://github.com/itdaniher/kissfft
-[play]: ...
+[play]: https://play.google.com/store/apps/details?id=com.paramsen.noise.sample
 [rx]: https://github.com/paramsen/noise/blob/master/sample/src/main/java/com/paramsen/noise/sample/view/MainActivity.kt#L56
 [sample]: https://github.com/paramsen/noise/tree/master/sample
 [tests]: https://github.com/paramsen/noise/blob/master/tester/src/androidTest/java/com/paramsen/noise/tester/NoiseInstrumentationTest.java
