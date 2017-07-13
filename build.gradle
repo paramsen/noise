@@ -49,4 +49,9 @@ task readme {
     }
 }
 
-task release(dependsOn: [":noise:bintrayUpload", ":readme"])
+task release(dependsOn: [":noise:bintrayUpload", ":readme"]) {
+    doLast {
+        println("Successfully released new version v${project(':noise').version}.")
+        println("Push generated README.md")
+    }
+}

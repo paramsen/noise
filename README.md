@@ -121,11 +121,11 @@ for(int i = 0; i < fft.length / 2; i++) {
 
 Include in Android Studio < 3.0 projects
 
-    compile 'com.paramsen.noise:0.1.4'
+    compile 'com.paramsen.noise:0.1.5'
 
 Or for Android Studio >= 3.0 with Gradle 4  projects
 
-    implementation 'com.paramsen.noise:0.1.4'
+    implementation 'com.paramsen.noise:0.1.5'
 
 ## Sample code
 
