@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tip"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:layout_marginBottom="32dp"
+    tools:background="@drawable/tip_bg"
+    tools:elevation="16dp"
+    tools:gravity="center_vertical"
+    tools:orientation="horizontal"
+    tools:padding="8dp"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_lightbulb_outline_black_24dp"
+        android:tint="#888" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:text="Try whistling!"
+        android:textColor="#888" />
+</merge>

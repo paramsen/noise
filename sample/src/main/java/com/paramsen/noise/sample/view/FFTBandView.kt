@@ -50,7 +50,7 @@ class FFTBandView(context: Context, attrs: AttributeSet?) : SimpleSurface(contex
                 accum /= bandSize / 2
             }
 
-            average += accum;
+            average += accum
 
             canvas.drawRect(width * (i / bands.toFloat()), height - (height * Math.min(accum / maxConst.toDouble(), 1.0).toFloat()) - height * .02f, width * (i / bands.toFloat()) + width / bands.toFloat(), height.toFloat(), paintBandsFill)
             canvas.drawRect(width * (i / bands.toFloat()), height - (height * Math.min(accum / maxConst.toDouble(), 1.0).toFloat()) - height * .02f, width * (i / bands.toFloat()) + width / bands.toFloat(), height.toFloat(), paintBands)

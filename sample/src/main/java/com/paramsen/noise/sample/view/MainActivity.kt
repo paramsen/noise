@@ -1,19 +1,21 @@
 package com.paramsen.noise.sample.view
 
 import android.Manifest.permission.RECORD_AUDIO
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat.checkSelfPermission
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.view.menu.ActionMenuItemView
+import android.support.v7.widget.ActionMenuView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import com.paramsen.noise.Noise
-import com.paramsen.noise.sample.BuildConfig
 import com.paramsen.noise.sample.R
 import com.paramsen.noise.sample.source.AudioSource
 import io.reactivex.Flowable
@@ -23,16 +25,16 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
-
 class MainActivity : AppCompatActivity() {
     val TAG = javaClass.simpleName!!
 
     val disposable: CompositeDisposable = CompositeDisposable()
 
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        scheduleAbout()
     }
 
     override fun onResume() {
@@ -76,7 +78,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Output windows of 4096 len, ~10/sec for 44.1khz
+     * Output windows of 4096 len, ~10/sec for 44.1khz, accumulates for FFT
      */
     private fun accumulate(o: Flowable<FloatArray>): Flowable<FloatArray> {
         return o.map(object : Function<FloatArray, FloatArray> {
@@ -123,5 +125,29 @@ class MainActivity : AppCompatActivity() {
         info.onShow()
 
         return true
+    }
+
+    private fun scheduleAbout() {
+        container.postDelayed({
+            if (!info.showed) {
+                try {
+                    val anim = AnimationUtils.loadAnimation(this, R.anim.nudge).apply {
+                        repeatCount = 3
+                        repeatMode = Animation.REVERSE
+                        duration = 200
+                        interpolator = AccelerateDecelerateInterpolator()
+                        onTerminate { scheduleAbout() }
+                    }
+
+                    (((((container.parent.parent as ViewGroup).getChildAt(1) as ViewGroup) //container
+                            .getChildAt(0) as ViewGroup) //actionbar
+                            .getChildAt(1) as ActionMenuView)
+                            .getChildAt(0) as ActionMenuItemView)
+                            .startAnimation(anim)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Could not animate nudge / ${Log.getStackTraceString(e)}")
+                }
+            }
+        }, 3000)
     }
 }

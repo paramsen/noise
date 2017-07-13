@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
-def VERSION_NAME = '0.5.5'
-def VERSION_CODE = 1
+def VERSION_NAME = '0.9'
+def VERSION_CODE = 3
 
 android {
     signingConfigs {

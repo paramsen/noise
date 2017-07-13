@@ -30,7 +30,7 @@ object Spectogram {
 
         for (i in 0..range - 1) {
             val f = i / range.toDouble()
-            var f1 = f * 4.0 % 1.0
+            val f1 = f * 4.0 % 1.0
 
             val blend = when ((f * 100).toInt()) {
                 in 0..24 -> Pair(a, b)

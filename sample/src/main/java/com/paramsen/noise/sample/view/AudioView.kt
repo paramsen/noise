@@ -6,8 +6,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
-import android.view.SurfaceView
-import android.view.View
 import java.util.*
 
 /**
@@ -39,7 +37,7 @@ class AudioView(context: Context, attrs: AttributeSet?) : SimpleSurface(context,
                     path.moveTo(width.toFloat(), sample)
                 path.lineTo(width - width * i / history.toFloat(), sample * 0.175f + height / 2)
             }
-            if (audio.size > 0 && audio.size < history)
+            if (audio.size in 1..(history - 1))
                 path.lineTo(0f, height / 2.toFloat())
         }
 

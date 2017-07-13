@@ -5,8 +5,11 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.support.v7.app.ActionBar
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewPropertyAnimator
+import android.view.animation.Animation
 
 /**
  * @author Pär Amsen 06/2017
@@ -74,6 +77,24 @@ fun ViewPropertyAnimator.onTerminate(then: () -> Unit): ViewPropertyAnimator {
     return this
 }
 
+fun Animation.onTerminate(then: () -> Unit): Animation {
+    this.setAnimationListener(object : Animation.AnimationListener {
+        override fun onAnimationRepeat(animation: Animation?) {
+        }
+
+        override fun onAnimationEnd(animation: Animation?) {
+            then()
+        }
+
+        override fun onAnimationStart(animation: Animation?) {
+        }
+    })
+
+    return this
+}
+
 fun View.padding(i: Int) {
     setPadding(i, i, i, i)
 }
+
+fun ActionBar.view(): ViewGroup = customView.parent.parent as ViewGroup
