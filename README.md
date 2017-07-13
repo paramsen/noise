@@ -13,6 +13,16 @@ However, a low level JNI api is available as well.
 ## Sample app
 Watch Noise compute FFT in real time from your microphone, the sample app is on [Google Play][play]!
 
+## Get started
+
+Include in Android Studio < 3.0 projects
+
+    compile 'com.paramsen.noise:0.1.5'
+
+Or for Android Studio >= 3.0 with Gradle 4  projects
+
+    implementation 'com.paramsen.noise:0.1.5'
+    
 ## Instructions
 
 This lib is a Java api for kissfft, consult the [kissfft readme][kissfft] if you want
@@ -116,16 +126,6 @@ for(int i = 0; i < fft.length / 2; i++) {
     pairs.add(new Pair(real, imaginary));
 }
 ```
-
-## Get started
-
-Include in Android Studio < 3.0 projects
-
-    compile 'com.paramsen.noise:0.1.5'
-
-Or for Android Studio >= 3.0 with Gradle 4  projects
-
-    implementation 'com.paramsen.noise:0.1.5'
 
 ## Sample code
 
