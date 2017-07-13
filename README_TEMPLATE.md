@@ -1,4 +1,9 @@
 # Noise
+
+<p align="left">
+  <img alt="Demo animation" src="icon_96x96.png">
+</p>
+
 _A FFT computation library for Android_
 
 Noise is an Android wrapper for kissfft, a FFT implementation written in C.

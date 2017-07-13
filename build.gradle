@@ -26,7 +26,7 @@ task clean(type: Delete) {
 
 task release(dependsOn: ":noise:bintrayUpload") {
     doLast {
-        def input = new File("./README.template")
+        def input = new File("./README_TEMPLATE.md")
         def output = new File("./README.md")
 
         def reader = new DataInputStream(new BufferedInputStream(new FileInputStream(input))).newReader()
