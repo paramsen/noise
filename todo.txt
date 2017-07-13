@@ -1,5 +1,2 @@
-* git modules script
-* bintray
 * readme gfx
 * play app
-* readme terminology

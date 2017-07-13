@@ -57,11 +57,11 @@ class MainActivity : AppCompatActivity() {
         val noise = Noise.real().optimized().init(4096, true)
 
         //AudioView
-        disposable.add(src.subscribe(audioView::onWindow, { e -> Log.e(TAG, e.message) }))
+        disposable.add(src.observeOn(Schedulers.newThread()).subscribe(audioView::onWindow, { e -> Log.e(TAG, e.message) }))
         //FFTView
         disposable.add(src.compose(this::accumulate)
                 .map(noise::fft)
-                .observeOn(Schedulers.computation())
+                .observeOn(Schedulers.newThread())
                 .subscribe({ fft ->
                     fftHeatMapView.onFFT(fft)
                     fftBandView.onFFT(fft)

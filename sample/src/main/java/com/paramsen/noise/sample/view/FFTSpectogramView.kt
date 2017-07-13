@@ -102,12 +102,6 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
     }
 
     override fun onFFT(fft: FloatArray) {
-        //zero dc and nyquist
-        fft[0] = .0f
-        fft[1] = .0f
-        fft[fft.size - 2] = .0f
-        fft[fft.size - 1] = .0f
-
         val bands = FloatArray(resolution)
         var accum: Float
         var avg = 0f
