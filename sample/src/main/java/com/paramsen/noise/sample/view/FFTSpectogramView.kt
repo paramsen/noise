@@ -21,13 +21,14 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
     val history = hz * sec
     var resolution = 512
     val ffts = ArrayDeque<FloatArray>()
+    val ffts1 = ArrayDeque<FloatArray>()
 
     val paintSpectogram: Paint = Paint()
     val paintText: Paint = textPaint()
     val paintMsg: Paint = errTextPaint()
     val bg = Color.rgb(20, 20, 25)
 
-    val hot = 30000
+    val hot = 30000 * (512 / resolution.toFloat())
 
     val drawTimes = ArrayDeque<Long>()
     var msg: Pair<Long, String>? = null
@@ -37,13 +38,24 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
     init {
         paintSpectogram.color = Color.parseColor("#FF2C00")
         paintSpectogram.style = Paint.Style.FILL
+
+        for (i in 0..history - 1) {
+            val a = FloatArray(resolution)
+            for (j in 0..resolution - 1) {
+                if (i % 10 == 0)
+                    a[j] = hot.toFloat() / j
+                else
+                    a[j] = j.toFloat()
+            }
+            ffts1.addLast(a)
+        }
     }
 
     fun drawFFT(canvas: Canvas): Canvas {
         // If rendering is causing backpressure [and thus fps drop], lower resolution + show message
         // ignore if downsampling goes too far (< 32)
         if (resolution > 32 && drawTimes.size >= history / 4 && getAvg() > fps) {
-            Log.w(TAG, "Draw hz exceeded 60")
+            Log.w(TAG, "Draw hz exceeded 60 (${getAvg()})")
             synchronized(ffts) {
                 ffts.clear()
                 drawTimes.clear()
@@ -64,6 +76,8 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
             var band: FloatArray? = null
 
             canvas.drawColor(bg)
+
+
             for (i in 0..ffts.size - 1) {
                 synchronized(ffts) {
                     band = ffts.elementAtOrNull(i)
@@ -93,6 +107,7 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
                 canvas.drawText(msg?.second, (width - paintMsg.measureText(msg?.second)) / 2, height - 16f.px, paintMsg)
             }
         })
+        println("===p4: ${drawTimes.last}")
 
         while (drawTimes.size > history) drawTimes.removeFirst()
 

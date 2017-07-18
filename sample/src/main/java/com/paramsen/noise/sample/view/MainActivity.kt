@@ -29,6 +29,11 @@ class MainActivity : AppCompatActivity() {
 
     val disposable: CompositeDisposable = CompositeDisposable()
 
+    val p0 = Profiler("p0")
+    val p1 = Profiler("p1")
+    val p2 = Profiler("p2")
+    val p3 = Profiler("p3")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -52,15 +57,19 @@ class MainActivity : AppCompatActivity() {
      * Subscribe to microphone
      */
     private fun start() {
-        val src = AudioSource().stream()
-        val noise = Noise.real().optimized().init(4096, true)
+        val src = AudioSource(4096).stream()
+        val noise = Noise.real().optimized().init(4096, false)
 
         //AudioView
-        disposable.add(src.observeOn(Schedulers.newThread()).subscribe(audioView::onWindow, { e -> Log.e(TAG, e.message) }))
+        disposable.add(src.observeOn(Schedulers.newThread())
+                .doOnNext({ p0.next() })
+                .subscribe(audioView::onWindow, { e -> Log.e(TAG, e.message) }))
         //FFTView
-        disposable.add(src.compose(this::accumulate)
-                .map(noise::fft)
+        disposable.add(src.observeOn(Schedulers.computation())
+                .doOnNext({ p1.next() })
+                .map({ noise.fft(it, FloatArray(4096 + 2)) })
                 .observeOn(Schedulers.newThread())
+                .doOnNext({ p3.next() })
                 .subscribe({ fft ->
                     fftHeatMapView.onFFT(fft)
                     fftBandView.onFFT(fft)
@@ -95,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                     val out = FloatArray(size)
                     System.arraycopy(buf, 0, out, 0, size)
 
-                    if(c > size) {
+                    if (c > size) {
                         System.arraycopy(buf, c % size, buf, 0, c % size)
                     }
 
@@ -107,6 +116,21 @@ class MainActivity : AppCompatActivity() {
                 return empty
             }
         }).filter { fft -> fft.size == size } //filter only the emissions of complete 4096 windows
+    }
+
+    private fun accumulate1(o: Flowable<FloatArray>): Flowable<FloatArray> {
+        return o.window(6).flatMapSingle { it.collect({ ArrayList<FloatArray>() }, { a, b -> a.add(b) }) }.map({ window ->
+            val out = FloatArray(4096)
+            var c = 0
+            for (each in window) {
+                if (c + each.size >= 4096)
+                    break
+
+                System.arraycopy(each, 0, out, c, each.size)
+                c += each.size - 1
+            }
+            out
+        })
     }
 
     private fun requestAudio(): Boolean {
@@ -159,4 +183,5 @@ class MainActivity : AppCompatActivity() {
             }
         }, 3000)
     }
+
 }

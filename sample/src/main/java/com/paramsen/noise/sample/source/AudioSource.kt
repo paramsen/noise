@@ -7,17 +7,17 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 
+const val RATE_HZ = 44100
+const val FPS = 60
+const val SAMPLE_SIZE = RATE_HZ / FPS
+
 /**
  * Rx Flowable factory that expose a Flowable through stream() that while subscribed to emits
  * AudioWindows of size 4096 at approx 44.1khz. Uses Disposable to handle deallocation
  *
  * @author Pär Amsen 06/2017
  */
-class AudioSource {
-    val RATE_HZ = 44100
-    val FPS = 60
-    val SAMPLE_SIZE = RATE_HZ / FPS
-
+class AudioSource(val sampleSize: Int = SAMPLE_SIZE) {
     private val flowable: Flowable<FloatArray>
 
     init {
@@ -40,15 +40,15 @@ class AudioSource {
                 recorder.release()
             })
 
-            val buf = ShortArray(SAMPLE_SIZE)
-            val out = FloatArray(SAMPLE_SIZE)
+            val buf = ShortArray(sampleSize)
+            val out = FloatArray(sampleSize)
             var read = 0
 
             while (!sub.isCancelled) {
-                read += recorder.read(buf, read, SAMPLE_SIZE - read)
+                read += recorder.read(buf, read, sampleSize - read)
 
-                if (read == SAMPLE_SIZE) {
-                    for (i in 0..SAMPLE_SIZE - 1) {
+                if (read == sampleSize) {
+                    for (i in 0..sampleSize - 1) {
                         out[i] = buf[i].toFloat()
                     }
 

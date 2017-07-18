@@ -17,7 +17,9 @@ public class NoiseThreadSafe {
     /**
      * @param in data to be processed
      * @param out result of computation
-     * @return float[] out
+     * @return float[] of length:
+     *      Real: in.length + 2
+     *      Imaginary: in.length
      */
     public float[] fft(float[] in, float[] out) {
         fft.fft(in, out);
@@ -31,8 +33,9 @@ public class NoiseThreadSafe {
      * @return float[] out
      */
     public float[] fft(float[] in) {
+        throw new RuntimeException("Real: in.length + 2, Imaginary: in.length, need factory for out.length depending on real/imag"); /*
         float[] out = new float[in.length + 2];
         fft.fft(in, out);
-        return out;
+        return out;*/
     }
 }

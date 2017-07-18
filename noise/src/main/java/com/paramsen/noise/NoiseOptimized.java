@@ -57,7 +57,7 @@ public class NoiseOptimized {
      *
      * @param in data to be processed
      * @param out result of computation
-     * @return float[] out
+     * @return float[] out, must be of length inSize + 2 where inSize is the constructor param
      */
     public float[] fft(float[] in, float[] out) {
         fft.fft(in, out, cfgPointer);
@@ -68,7 +68,7 @@ public class NoiseOptimized {
      * Use if init was called with internalStorage == true.
      *
      * @param in data to be processed
-     * @return float[] result
+     * @return float[] result of length inSize + 2 where inSize is the constructor param
      */
     public float[] fft(float[] in) {
         if(out == null)
