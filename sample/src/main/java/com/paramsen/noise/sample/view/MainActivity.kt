@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
      * Subscribe to microphone
      */
     private fun start() {
-        val src = AudioSource(4096).stream()
+        val src = AudioSource().stream()
         val noise = Noise.real().optimized().init(4096, false)
 
         //AudioView
@@ -65,10 +65,9 @@ class MainActivity : AppCompatActivity() {
                 .doOnNext({ p0.next() })
                 .subscribe(audioView::onWindow, { e -> Log.e(TAG, e.message) }))
         //FFTView
-        disposable.add(src.observeOn(Schedulers.computation())
+        disposable.add(src.observeOn(Schedulers.newThread())
                 .doOnNext({ p1.next() })
                 .map({ noise.fft(it, FloatArray(4096 + 2)) })
-                .observeOn(Schedulers.newThread())
                 .doOnNext({ p3.next() })
                 .subscribe({ fft ->
                     fftHeatMapView.onFFT(fft)

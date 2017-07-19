@@ -6,20 +6,25 @@ import android.media.MediaRecorder
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
+import java.nio.FloatBuffer
 
 const val RATE_HZ = 44100
-const val FPS = 60
-const val SAMPLE_SIZE = RATE_HZ / FPS
+const val SAMPLE_SIZE = 4096
 
 /**
  * Rx Flowable factory that expose a Flowable through stream() that while subscribed to emits
- * AudioWindows of size 4096 at approx 44.1khz. Uses Disposable to handle deallocation
+ * audio frames of size 4096 and 768 [~10fps, ~60fps]. Uses Disposable to handle deallocation.
  *
  * @author Pär Amsen 06/2017
  */
-class AudioSource(val sampleSize: Int = SAMPLE_SIZE) {
+class AudioSource() {
     private val flowable: Flowable<FloatArray>
 
+    /**
+     * The returned Flowable publish frames of two sizes; 4096 and 768. Roughly 10fps / 60fps.
+     * Filter is used to distinguish the two types. Ideally this should be handled in two separate
+     * Flowables, but AudioRecord makes that utterly complex.
+     */
     init {
         flowable = Flowable.create<FloatArray>({ sub ->
             val src = MediaRecorder.AudioSource.MIC
@@ -40,19 +45,25 @@ class AudioSource(val sampleSize: Int = SAMPLE_SIZE) {
                 recorder.release()
             })
 
-            val buf = ShortArray(sampleSize)
-            val out = FloatArray(sampleSize)
+            val buf = ShortArray(512)
+            val out = FloatBuffer.allocate(SAMPLE_SIZE)
             var read = 0
 
             while (!sub.isCancelled) {
-                read += recorder.read(buf, read, sampleSize - read)
+                read += recorder.read(buf, read, buf.size - read)
 
-                if (read == sampleSize) {
-                    for (i in 0..sampleSize - 1) {
-                        out[i] = buf[i].toFloat()
+                if (read == buf.size) {
+                    for (i in 0..buf.size - 1) {
+                        out.put(buf[i].toFloat())
                     }
 
-                    sub.onNext(out)
+                    if (!out.hasRemaining()) {
+                        val cpy = FloatArray(out.array().size)
+                        System.arraycopy(out.array(), 0, cpy, 0, out.array().size)
+                        sub.onNext(cpy)
+                        out.clear()
+                    }
+
                     read = 0
                 }
             }
