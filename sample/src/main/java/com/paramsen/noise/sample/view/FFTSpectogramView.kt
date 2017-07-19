@@ -98,7 +98,7 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
         }
 
         // If rendering is causing backpressure [and thus fps drop], lower resolution + show message
-        if (resolution >= minResolution && drawTimes.size >= history / 5 && getAvg() > fps) {
+        if (resolution >= minResolution && drawTimes.size >= history / 5 && avgDrawTime() > fps) {
             synchronized(ffts) {
                 ffts.clear()
             }
@@ -106,7 +106,7 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
             drawTimes.clear()
             resolution /= 2
             msg = Pair(System.currentTimeMillis() + 10000, "DOWNSAMPLE DUE TO LOW GPU MEMORY")
-            Log.w(TAG, "Draw hz exceeded 60 (${getAvg()}), downsampled to $resolution")
+            Log.w(TAG, "Draw hz exceeded 60 (${avgDrawTime()}), downsampled to $resolution")
 
             return canvas
         }
@@ -160,7 +160,7 @@ class FFTSpectogramView(context: Context, attrs: AttributeSet?) : SimpleSurface(
         drawSurface(this::drawGraphic)
     }
 
-    private fun getAvg(): Int {
+    private fun avgDrawTime(): Int {
         if (System.currentTimeMillis() - lastAvg.first > 1000) {
             lastAvg = Pair(System.currentTimeMillis(), if (drawTimes.size > 0) drawTimes.sum().div(drawTimes.size).toInt() else 0)
         }

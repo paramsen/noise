@@ -67,7 +67,12 @@ class MainActivity : AppCompatActivity() {
         //FFTView
         disposable.add(src.observeOn(Schedulers.newThread())
                 .doOnNext({ p1.next() })
-                .map({ noise.fft(it, FloatArray(4096 + 2)) })
+                .map {
+                    for (i in 0..it.size - 1)
+                        it[i] *= 2.0f
+                    return@map it
+                }
+                .map { noise.fft(it, FloatArray(4096 + 2)) }
                 .doOnNext({ p3.next() })
                 .subscribe({ fft ->
                     fftHeatMapView.onFFT(fft)
