@@ -37,11 +37,21 @@ public class Noise {
                 public void fft(float[] in, float[] out) {
                     NoiseNativeBridge.realThreadSafe(in, out);
                 }
+            }, new FuncO1<float[], Integer>() {
+                @Override
+                public float[] call(Integer inSize) {
+                    return new float[inSize + 2];
+                }
             });
             else return new NoiseThreadSafe(new Func2() {
                 @Override
                 public void fft(float[] in, float[] out) {
                     NoiseNativeBridge.imaginaryThreadSafe(in, out);
+                }
+            }, new FuncO1<float[], Integer>() {
+                @Override
+                public float[] call(Integer inSize) {
+                    return new float[inSize];
                 }
             });
         }

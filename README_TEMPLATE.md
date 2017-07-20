@@ -137,6 +137,24 @@ I've written a sample app in Kotlin which computes FFT:s on the real time microp
 features some [cool Rx solutions][rx] for mic integration that might be interesting in themselves. It's 
 on [Google Play][play] and the source can be found in the [sample module][sample].
 
+## Performance tests
+
+The following tests measure the average FFT computation time over 1000 computations for an array of length 4096. Run on a new S8+ and an old LG G3 for comparison.
+
+**Samsung S8+:**
+
+    Optimized Imaginary:   0.32ms
+    Optimized Real:        0.32ms
+    Threadsafe Imaginary:  0.38ms
+    Threadsafe Real:       0.48ms
+
+**LG G3:**
+
+    Optimized Imaginary:   0.76ms
+    Optimized Real:        0.72ms
+    Threadsafe Imaginary:  1.02ms
+    Threadsafe Real:       1.33ms
+
 ## Tests
 
 The implementation has been tested for compliance with the kissfft C library; for the same input,
@@ -177,3 +195,4 @@ Kissfft is licensed under the Revised BSD License.
 [sample]: https://github.com/paramsen/noise/tree/master/sample
 [tests]: https://github.com/paramsen/noise/blob/master/tester/src/androidTest/java/com/paramsen/noise/tester/NoiseInstrumentationTest.java
 [cTests]: https://github.com/paramsen/noise/blob/master/cpp_test_data_suite/kiss_fft_tester.cpp
+[benchmarks]: https://browser.geekbench.com/android-benchmarks

@@ -7,17 +7,16 @@ import com.paramsen.noise.Noise;
 import com.paramsen.noise.NoiseOptimized;
 import com.paramsen.noise.NoiseThreadSafe;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 import static junit.framework.Assert.assertEquals;
 
+/**
+ * Reminder: org.junit and android.support.test imports fail if Build Variant == release
+ */
 @RunWith(AndroidJUnit4.class)
 public class NoiseInstrumentationTest {
     @Test
@@ -34,7 +33,7 @@ public class NoiseInstrumentationTest {
      * Assert that the output on a predefined signal of 4096 from kissfft is exactly the same for
      * this library as it is for kissfft. The "prerecorded" FFT is created through the
      * cpp_test_data_suite which simply compiles and runs kissfft on the input dataset in assets.
-     *
+     * <p>
      * Hence, if this test is green kissfft works as intended.
      */
     @Test
@@ -74,7 +73,7 @@ public class NoiseInstrumentationTest {
      * Assert that the output on a predefined signal of 4096 from kissfft is exactly the same for
      * this library as it is for kissfft. The "prerecorded" FFT is created through the
      * cpp_test_data_suite which simply compiles and runs kissfft on the input dataset in assets.
-     *
+     * <p>
      * Hence, if this test is green kissfft works as intended.
      */
     @Test
@@ -108,7 +107,7 @@ public class NoiseInstrumentationTest {
      * Assert that the output on a predefined signal of 4096 from kissfft is exactly the same for
      * this library as it is for kissfft. The "prerecorded" FFT is created through the
      * cpp_test_data_suite which simply compiles and runs kissfft on the input dataset in assets.
-     *
+     * <p>
      * Hence, if this test is green kissfft works as intended.
      */
     @Test
@@ -154,7 +153,7 @@ public class NoiseInstrumentationTest {
      * Assert that the output on a predefined signal of 4096 from kissfft is exactly the same for
      * this library as it is for kissfft. The "prerecorded" FFT is created through the
      * cpp_test_data_suite which simply compiles and runs kissfft on the input dataset in assets.
-     *
+     * <p>
      * Hence, if this test is green kissfft works as intended.
      */
     @Test

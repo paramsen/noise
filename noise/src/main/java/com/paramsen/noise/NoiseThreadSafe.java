@@ -9,9 +9,11 @@ package com.paramsen.noise;
  */
 public class NoiseThreadSafe {
     private Func2 fft;
+    private FuncO1<float[], Integer> outFactory;
 
-    public NoiseThreadSafe(Func2 fft) {
+    public NoiseThreadSafe(Func2 fft, FuncO1<float[], Integer> outFactory) {
         this.fft = fft;
+        this.outFactory = outFactory;
     }
 
     /**
@@ -33,9 +35,8 @@ public class NoiseThreadSafe {
      * @return float[] out
      */
     public float[] fft(float[] in) {
-        throw new RuntimeException("Real: in.length + 2, Imaginary: in.length, need factory for out.length depending on real/imag"); /*
-        float[] out = new float[in.length + 2];
+        float[] out = outFactory.call(in.length);
         fft.fft(in, out);
-        return out;*/
+        return out;
     }
 }
