@@ -21,11 +21,11 @@ Watch Noise compute FFT in real time from your microphone, the sample app is on 
 
 Include in Android Studio < 3.0 projects
 
-    compile 'com.paramsen.noise:0.1.5'
+    compile 'com.paramsen.noise:0.5'
 
 Or for Android Studio >= 3.0 with Gradle 4  projects
 
-    implementation 'com.paramsen.noise:0.1.5'
+    implementation 'com.paramsen.noise:0.5'
     
 ## Instructions
 
