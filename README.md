@@ -1,9 +1,9 @@
 # Noise
 
-<a href="icon_96x96.png"><img src="icon_96x96.png" alt="Icon" style="max-width:100%;float:left"></a>
-<a href="https://jitpack.io/#paramsen/noise"><img src="https://camo.githubusercontent.com/0520481a545182c19d325c79b97bbe881a0f39e0/68747470733a2f2f6a69747061636b2e696f2f762f706172616d73656e2f6e6f6973652e737667" alt="Release" data-canonical-src="https://jitpack.io/v/paramsen/noise.svg" style="max-width:100%;float:left"></a>
+[![Release](https://jitpack.io/v/paramsen/noise.svg)](https://jitpack.io/#paramsen/noise)
 
-<p style="float:clear"></p>
+[![Icon](icon_96x96.png)](icon_96x96.png)
+
 _A FFT computation library for Android_
 
 Noise is an Android wrapper for kissfft, a FFT implementation written in C.
