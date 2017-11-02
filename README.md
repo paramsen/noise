@@ -2,10 +2,6 @@
 
 [![Release](https://jitpack.io/v/paramsen/noise.svg)](https://jitpack.io/#paramsen/noise)
 
-<p align="left">
-  <img alt="Icon" src="icon_96x96.png">
-</p>
-
 [![Icon](icon_96x96.png)](icon_96x96.png)
 
 _A FFT computation library for Android_
