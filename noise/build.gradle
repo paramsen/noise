@@ -1,16 +1,19 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
 
-def VERSION_NAME = "0.5"
-def VERSION_CODE = 4
+group = 'com.github.paramsen'
+
+def VERSION_NAME = "0.6"
+def VERSION_CODE = 5
 
 version = VERSION_NAME
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "26.0.0"
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode VERSION_CODE
         versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -26,6 +29,29 @@ android {
             path "CMakeLists.txt"
         }
     }
-}
 
-apply from : 'bintray.gradle'
+    /* verify that kissfft is initialized */
+    task verifyKissfftInitialized {
+        if(!(new File("noise/src/main/native/kissfft/kiss_fft.c").exists())) throw new BuildCancelledException('Initialize git submodules before building (read "development" section in readme)')
+    }
+
+    /* jitpack.io conf */
+    task sourcesJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier = 'sources'
+    }
+    task javadoc(type: Javadoc) {
+        failOnError false
+        source = android.sourceSets.main.java.sourceFiles
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        classpath += configurations.compile
+    }
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+}

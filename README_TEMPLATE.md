@@ -77,7 +77,7 @@ for(int i = 0; i < fft.length / 2; i++) {
 Instantiate an optimized instance, this example is configured to compute DFT:s on input arrays of size
 8192 (4096 [real, imaginary] pairs) and internally manages the output array.
 ```
-Noise noise = Noise.real()
+Noise noise = Noise.imaginary()
     .optimized()
     .init(8192, true); //input size == 8192, internal output array
 ```
