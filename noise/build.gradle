@@ -3,7 +3,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.github.paramsen'
 
-def VERSION_NAME = "0.6"
+def VERSION_NAME = "0.7.1"
 def VERSION_CODE = 5
 
 version = VERSION_NAME

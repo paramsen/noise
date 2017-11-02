@@ -1,8 +1,12 @@
 # Noise
 
+[![Release](https://jitpack.io/v/paramsen/noise.svg)](https://jitpack.io/#paramsen/noise)
+
 <p align="left">
-  <img alt="Demo animation" src="icon_96x96.png">
+  <img alt="Icon" src="icon_96x96.png">
 </p>
+
+[![Icon](icon_96x96.png)](icon_96x96.png)
 
 _A FFT computation library for Android_
 
@@ -13,19 +17,26 @@ However, a low level JNI api is available as well.
 ## Sample app
 Watch Noise compute FFT in real time from your microphone, the sample app is on [Google Play][play]!
 
-<p align="left">
-  <img alt="Sample app preview" src="sample_preview.gif">
-</p>
+[![Sample app preview](sample_preview.gif)](sample_preview.gif)
 
 ## Get started
 
+Add jitpack.io repo to your root `build.gradle`:
+    
+    allprojects {
+        repositories {
+            //...
+            maven { url "https://jitpack.io" }
+        }
+    }
+
 Include in Android Studio < 3.0 projects
 
-    compile 'com.paramsen.noise:{{version}}'
+    compile 'com.github.paramsen:noise:{{version}}'
 
-Or for Android Studio >= 3.0 with Gradle 4  projects
+Or for Android Studio >= 3.0 with Gradle 4 projects
 
-    implementation 'com.paramsen.noise:{{version}}'
+    implementation 'com.github.paramsen:noise:{{version}}'
     
 ## Instructions
 
