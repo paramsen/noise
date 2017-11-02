@@ -1,6 +1,6 @@
 # Noise
 
-<a href="/paramsen/noise/blob/master/icon_96x96.png"><img src="/paramsen/noise/raw/master/icon_96x96.png" alt="Icon" style="max-width:100%;float:left"></a>
+<a href="icon_96x96.png"><img src="/paramsen/noise/raw/master/icon_96x96.png" alt="Icon" style="max-width:100%;float:left"></a>
 <a href="https://jitpack.io/#paramsen/noise"><img src="https://camo.githubusercontent.com/0520481a545182c19d325c79b97bbe881a0f39e0/68747470733a2f2f6a69747061636b2e696f2f762f706172616d73656e2f6e6f6973652e737667" alt="Release" data-canonical-src="https://jitpack.io/v/paramsen/noise.svg" style="max-width:100%;float:left"></a>
 
 <p style="float:clear"></p>
