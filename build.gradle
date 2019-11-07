@@ -53,15 +53,9 @@ task release(dependsOn: [":readme"]) {
         exec {
             executable 'git'
             args 'tag', '-a', "${project(':noise').version}", '-m', "Release ${project(':noise').version}"
-            standardOutput = new Suppress()
         }
 
         println("Successfully tagged new release (${project(':noise').version}).")
         println("Push manually!")
     }
-}
-
-class Suppress extends OutputStream {
-    @Override
-    void write(int i) throws IOException {}
 }

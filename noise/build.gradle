@@ -4,8 +4,8 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.github.paramsen'
 
-def VERSION_NAME = "1.0.0"
-def VERSION_CODE = 6
+def VERSION_NAME = "2.0.0"
+def VERSION_CODE = 7
 
 version = VERSION_NAME
 
