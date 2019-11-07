@@ -28,11 +28,11 @@ Add jitpack.io repo to your root `build.gradle`:
 
 Include in Android Studio < 3.0 projects
 
-    compile 'com.github.paramsen:noise:0.7.1'
+    compile 'com.github.paramsen:noise:1.0.0'
 
 Or for Android Studio >= 3.0 with Gradle 4 projects
 
-    implementation 'com.github.paramsen:noise:0.7.1'
+    implementation 'com.github.paramsen:noise:1.0.0'
     
 ## Instructions
 
