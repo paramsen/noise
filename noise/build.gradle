@@ -36,6 +36,10 @@ android {
         }
     }
 
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    }
+
     /* verify that kissfft is initialized */
     task verifyKissfftInitialized {
         if(!(new File("noise/src/main/native/kissfft/kiss_fft.c").exists()))

@@ -57,15 +57,15 @@ class MainActivity : AppCompatActivity() {
      */
     private fun start() {
         val src = AudioSource().stream()
-        val noise = Noise.real().optimized().init(4096, false)
+        val noise = Noise.real(4096)
 
         //AudioView
         disposable.add(src.observeOn(Schedulers.newThread())
-                .doOnNext({ p0.next() })
+                .doOnNext { p0.next() }
                 .subscribe(audioView::onWindow, { e -> Log.e(TAG, e.message) }))
         //FFTView
         disposable.add(src.observeOn(Schedulers.newThread())
-                .doOnNext({ p1.next() })
+                .doOnNext { p1.next() }
                 .map {
                     for (i in 0..it.size - 1)
                         it[i] *= 2.0f
