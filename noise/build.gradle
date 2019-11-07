@@ -3,17 +3,17 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.github.paramsen'
 
-def VERSION_NAME = "0.7.1"
-def VERSION_CODE = 5
+def VERSION_NAME = "1.0.0"
+def VERSION_CODE = 6
 
 version = VERSION_NAME
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.0'
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 29
         versionCode VERSION_CODE
         versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -32,7 +32,7 @@ android {
 
     /* verify that kissfft is initialized */
     task verifyKissfftInitialized {
-        if(!(new File("noise/src/main/native/kissfft/kiss_fft.c").exists())) throw new BuildCancelledException('Initialize git submodules before building (read "development" section in readme)')
+        if(!(new File("noise/src/main/native/kissfft/kiss_fft.c").exists())) throw new Exception('Initialize git submodules before building (read "development" section in readme)')
     }
 
     /* jitpack.io conf */
