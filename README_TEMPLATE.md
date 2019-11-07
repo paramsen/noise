@@ -185,7 +185,7 @@ Release steps are:
 Noise is licensed under the Apache 2.0.  
 Kissfft is licensed under the Revised BSD License.
 
-[kissfft]: https://github.com/itdaniher/kissfft
+[kissfft]: https://github.com/mborgerding/kissfft
 [play]: https://play.google.com/store/apps/details?id=com.paramsen.noise.sample
 [rx]: https://github.com/paramsen/noise/blob/master/sample/src/main/java/com/paramsen/noise/sample/view/MainActivity.kt#L56
 [sample]: https://github.com/paramsen/noise/tree/master/sample
