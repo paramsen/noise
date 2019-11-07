@@ -40,10 +40,10 @@ class AudioSource() {
             val recorder = AudioRecord(src, RATE_HZ, cfg, format, size)
 
             recorder.startRecording()
-            sub.setCancellable({
+            sub.setCancellable {
                 recorder.stop()
                 recorder.release()
-            })
+            }
 
             val buf = ShortArray(512)
             val out = FloatBuffer.allocate(SAMPLE_SIZE)
@@ -53,8 +53,8 @@ class AudioSource() {
                 read += recorder.read(buf, read, buf.size - read)
 
                 if (read == buf.size) {
-                    for (i in 0..buf.size - 1) {
-                        out.put(buf[i].toFloat())
+                    for (element in buf) {
+                        out.put(element.toFloat())
                     }
 
                     if (!out.hasRemaining()) {

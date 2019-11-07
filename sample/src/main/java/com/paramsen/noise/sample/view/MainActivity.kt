@@ -4,10 +4,6 @@ import android.Manifest.permission.RECORD_AUDIO
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.content.ContextCompat.checkSelfPermission
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.view.menu.ActionMenuItemView
-import android.support.v7.widget.ActionMenuView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -15,6 +11,9 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ActionMenuView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.ActionMenuItemView
 import com.paramsen.noise.Noise
 import com.paramsen.noise.sample.R
 import com.paramsen.noise.sample.source.AudioSource
@@ -123,7 +122,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun accumulate1(o: Flowable<FloatArray>): Flowable<FloatArray> {
-        return o.window(6).flatMapSingle { it.collect({ ArrayList<FloatArray>() }, { a, b -> a.add(b) }) }.map({ window ->
+        return o.window(6).flatMapSingle { it.collect({ ArrayList<FloatArray>() }, { a, b -> a.add(b) }) }.map { window ->
             val out = FloatArray(4096)
             var c = 0
             for (each in window) {
@@ -134,11 +133,11 @@ class MainActivity : AppCompatActivity() {
                 c += each.size - 1
             }
             out
-        })
+        }
     }
 
     private fun requestAudio(): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(this, RECORD_AUDIO) != PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(RECORD_AUDIO) != PERMISSION_GRANTED) {
             requestPermissions(arrayOf(RECORD_AUDIO), 1337)
             return false
         }

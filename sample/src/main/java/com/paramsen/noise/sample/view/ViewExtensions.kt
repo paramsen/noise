@@ -5,11 +5,11 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
-import android.support.v7.app.ActionBar
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewPropertyAnimator
 import android.view.animation.Animation
+import androidx.appcompat.app.ActionBar
 
 /**
  * @author Pär Amsen 06/2017

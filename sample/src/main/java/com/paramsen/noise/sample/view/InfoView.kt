@@ -6,12 +6,12 @@ import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.LOLLIPOP
 import android.support.constraint.ConstraintLayout
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.animation.AccelerateInterpolator
+import androidx.core.content.ContextCompat
 import com.paramsen.noise.sample.BuildConfig
 import com.paramsen.noise.sample.R
 import kotlinx.android.synthetic.main.view_info.view.*
@@ -23,11 +23,11 @@ import kotlinx.android.synthetic.main.view_info.view.*
 class InfoView : ConstraintLayout {
     var showed = false
 
-    constructor(context: Context?) : this(context, null)
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         layoutParams = LayoutParams(LayoutParams.MATCH_CONSTRAINT, LayoutParams.WRAP_CONTENT)
         LayoutInflater.from(context).inflate(R.layout.view_info, this, true)
 

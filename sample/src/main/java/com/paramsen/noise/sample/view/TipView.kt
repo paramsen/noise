@@ -2,13 +2,13 @@ package com.paramsen.noise.sample.view
 
 import android.content.Context
 import android.os.Build
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.animation.LinearOutSlowInInterpolator
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.paramsen.noise.sample.R
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @author Pär Amsen 07/2017
  */
 
-class TipView(context: Context?, attrs: AttributeSet?) : LinearLayout(context, attrs) {
+class TipView(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     private val showed = AtomicBoolean(false)
 
     init {

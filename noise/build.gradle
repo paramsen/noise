@@ -32,7 +32,8 @@ android {
 
     /* verify that kissfft is initialized */
     task verifyKissfftInitialized {
-        if(!(new File("noise/src/main/native/kissfft/kiss_fft.c").exists())) throw new Exception('Initialize git submodules before building (read "development" section in readme)')
+        if(!(new File("noise/src/main/native/kissfft/kiss_fft.c").exists()))
+            throw new Exception('Initialize git submodules before building (read "development" section in readme)')
     }
 
     /* jitpack.io conf */

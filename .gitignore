@@ -8,3 +8,4 @@
 .externalNativeBuild
 /library/src/main/native/kissfft
 /*.apk
+noise/.cxx/
