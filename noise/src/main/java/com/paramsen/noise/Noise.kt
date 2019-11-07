@@ -3,16 +3,18 @@ package com.paramsen.noise
 import java.io.Closeable
 
 /**
- * Build instance -> Use instance to compute FFTs -> Close instance to free native allocations
+ * Instances should be closed when no longer in use to free native allocations.
  *
  * @author Pär Amsen 11/2019
  */
-class Noise(private val configPointer: Long, private val isReal: Boolean) : Closeable {
-    /** @return dst */
+class Noise private constructor(private val configPointer: Long, private val isReal: Boolean) : Closeable {
+    /** @return dst for convenience */
     fun fft(src: FloatArray, dst: FloatArray): FloatArray {
         if (isReal) {
+            require(src.size == dst.size + 2) { "Cannot compute FFT, dst length must equal src length + 2" }
             NoiseNativeBridge.real(src, dst, configPointer)
         } else {
+            require(src.size == dst.size) { "Cannot compute FFT, dst length must equal src length" }
             NoiseNativeBridge.imaginary(src, dst, configPointer)
         }
 
