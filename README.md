@@ -8,7 +8,7 @@ _A FFT computation library for Android_
 
 Noise is an Android wrapper for kissfft, a FFT implementation written in C.
 Noise features an api that is designed to be easy to use, and familiar for Android devs.
-However, a low level JNI api is available as well.
+(JNI bindings are available as well)
 
 ## Sample app
 Watch Noise compute FFT in real time from your microphone, the sample app is on [Google Play][play]!
@@ -26,24 +26,20 @@ Add jitpack.io repo to your root `build.gradle`:
         }
     }
 
-Include in Android Studio < 3.0 projects
-
-    compile 'com.github.paramsen:noise:2.0.0'
-
-Or for Android Studio >= 3.0 with Gradle 4 projects
+Include in Android project:
 
     implementation 'com.github.paramsen:noise:2.0.0'
     
 ## Instructions
 
-This lib is a Java api for kissfft, consult the [kissfft readme][kissfft] if you want
+This lib is a Kotlin wrapper for kissfft, consult the [kissfft readme][kissfft] if you want
 more information about the internal FFT implementation.
 
 Noise supports computing DFT from real and imaginary input data.
 
 #### Real input
 
-Instantiate an instance, this example is configured to compute DFT:s on input arrays of size 4096.
+Instantiate, this example is configured to compute DFT:s on input arrays of size 4096.
 ```
 Noise noise = Noise.real(4096) //input size == 4096
 ```
@@ -77,7 +73,7 @@ for(int i = 0; i < fft.length / 2; i++) {
 This example is configured to compute DFT:s on input arrays of size 8192 (4096 [real, imaginary] pairs).
 
 ```
-Noise noise = Noise.imaginary(8192) //input size == 8192 to hold 4096 real and 4096 imaginary numbers
+Noise noise = Noise.imaginary(8192) //input size == 8192
 ```
 
 In order to compute a DFT from imaginary input, we need to structure our real+imaginary pairs in a 
