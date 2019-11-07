@@ -39,36 +39,29 @@ Or for Android Studio >= 3.0 with Gradle 4 projects
 This lib is a Java api for kissfft, consult the [kissfft readme][kissfft] if you want
 more information about the internal FFT implementation.
 
-#### Instantiate Noise
-
-Noise supports computing DFT from real and imaginary input data, through either a threadsafe or 
-optimized implementation. An optimized instance computes DFT:s at half the time and should be fit
-for most use cases. Threadsafe instances can compute DFT:s concurrently for variable input sizes, 
-but has an overhead of allocating memory for each invocation.
+Noise supports computing DFT from real and imaginary input data.
 
 #### Real input
 
-Instantiate an optimized instance, this example is configured to compute DFT:s on input arrays of size 4096
-and internally manages the output array.
+Instantiate an instance, this example is configured to compute DFT:s on input arrays of size 4096.
 ```
-Noise noise = Noise.real()
-    .optimized()
-    .init(4096, true); //input size == 4096, internal output array
+Noise noise = Noise.real(4096) //input size == 4096
 ```
 
 Invoke the FFT on some input data.
 
 ```
-float[] realInput = new float[4096];
+float[] src = new float[4096];
+float[] dst = new float[4096 + 2]; //real output length equals src+2
+
+// .. fill src with data
+
+// Compute FFT:
     
-// .. fill realInput with data
+float[] fft = noise.fft(src, dst);
     
-// Compute the FFT with realInput:
-    
-float[] fft = noise.fft(realInput);
-    
-// The result array has the pairs of real+imaginary floats in a one dimensional array; even indeces
-// are real, odd indeces are imaginary. DC bin is located at index 0, 1, nyquist at index n-2, n-1
+// The result array has the pairs of real+imaginary floats in a one dimensional array; even indices
+// are real, odd indices are imaginary. DC bin is located at index 0, 1, nyquist at index n-2, n-1
     
 for(int i = 0; i < fft.length / 2; i++) {
     float real = fft[i * 2];
@@ -81,12 +74,10 @@ for(int i = 0; i < fft.length / 2; i++) {
 
 #### Imaginary input
 
-Instantiate an optimized instance, this example is configured to compute DFT:s on input arrays of size
-8192 (4096 [real, imaginary] pairs) and internally manages the output array.
+This example is configured to compute DFT:s on input arrays of size 8192 (4096 [real, imaginary] pairs).
+
 ```
-Noise noise = Noise.imaginary()
-    .optimized()
-    .init(8192, true); //input size == 8192, internal output array
+Noise noise = Noise.imaginary(8192) //input size == 8192 to hold 4096 real and 4096 imaginary numbers
 ```
 
 In order to compute a DFT from imaginary input, we need to structure our real+imaginary pairs in a 
@@ -106,8 +97,8 @@ for(int i = 0; i < pairs.length; i++) {
     
 float[] fft = noise.fft(realInput);
     
-// The output array has the pairs of real+imaginary floats in a one dimensional array; even indeces
-// are real, odd indeces are imaginary. DC bin is located at index 0, 1, nyquist at index n/2-2, n/2-1
+// The output array has the pairs of real+imaginary floats in a one dimensional array; even indices
+// are real, odd indices are imaginary. DC bin is located at index 0, 1, nyquist at index n/2-2, n/2-1
     
 for(int i = 0; i < fft.length / 2; i++) {
     float real = fft[i * 2];
@@ -184,13 +175,15 @@ Setup steps are:
 
 #### Release
 
-There's a Gradle task that uploads to Bintray and generates the README.md from template.
+There's a Gradle task that generates the README.md from template and git tags the current commit
+with the version number. JitPack builds on push of the tag.
 
 Release steps are:
 
 1. Bump version in `noise/build.gradle`
 2. Run `./gradlew release` in project root (generates readme)
 3. Push generated readme changes to repo
+4. Wait for JitPack to build
 
 ## License
 Noise is licensed under the Apache 2.0.  
