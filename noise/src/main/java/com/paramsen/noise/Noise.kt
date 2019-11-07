@@ -11,7 +11,7 @@ class Noise private constructor(private val configPointer: Long, private val isR
     /** @return dst for convenience */
     fun fft(src: FloatArray, dst: FloatArray): FloatArray {
         if (isReal) {
-            require(src.size == dst.size + 2) { "Cannot compute FFT, dst length must equal src length + 2" }
+            require(dst.size == src.size + 2) { "Cannot compute FFT, dst length must equal src length + 2" }
             NoiseNativeBridge.real(src, dst, configPointer)
         } else {
             require(src.size == dst.size) { "Cannot compute FFT, dst length must equal src length" }
@@ -30,14 +30,16 @@ class Noise private constructor(private val configPointer: Long, private val isR
     }
 
     companion object {
+        /** @param inputLength fixed input length to compute FFT for */
         @JvmStatic
-        fun real(n: Int): Noise {
-            return Noise(NoiseNativeBridge.realConfig(n), true)
+        fun real(inputLength: Int): Noise {
+            return Noise(NoiseNativeBridge.realConfig(inputLength), true)
         }
 
+        /** @param inputLength fixed input length to compute FFT for */
         @JvmStatic
-        fun imaginary(n: Int): Noise {
-            return Noise(NoiseNativeBridge.imaginaryConfig(n), false)
+        fun imaginary(inputLength: Int): Noise {
+            return Noise(NoiseNativeBridge.imaginaryConfig(inputLength), false)
         }
     }
 }
